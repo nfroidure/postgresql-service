@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`initPGService pg should work 1`] = `Array []`;
+
+exports[`initPGService should work 1`] = `
+Array [
+  Array [
+    "debug",
+    "Initializing PG service... 🐘",
+  ],
+]
+`;
+
+exports[`initPGService should work with Knifecycle 1`] = `
+Array [
+  Array [
+    "debug",
+    "Initializing PG service... 🐘",
+  ],
+]
+`;
