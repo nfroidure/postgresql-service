@@ -45,7 +45,7 @@ export default initializer(
  * @param  {Object}   [services.PG]      A `pg` compatible configuration object
  * @return {Promise<Object>}             A promise of the pg service
  * @example
- * import initPGService from 'pg-service';
+ * import initPGService from 'postgresql-service';
  *
  * const { service: pg, dispose } = await initPGService({
  *   log: console.log.bind(console),

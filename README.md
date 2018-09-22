@@ -4,17 +4,17 @@
 [//]: # (`content:start/end` flags, your changes would)
 [//]: # (be overridden.)
 [//]: # ( )
-# pg-service
+# postgresql-service
 > A simple wrapper around `node-pg`
 
-[![NPM version](https://badge.fury.io/js/pg-service.svg)](https://npmjs.org/package/pg-service)
-[![Build status](https://secure.travis-ci.org/nfroidure/pg-service.svg)](https://travis-ci.org/nfroidure/pg-service)
-[![Dependency Status](https://david-dm.org/nfroidure/pg-service.svg)](https://david-dm.org/nfroidure/pg-service)
-[![devDependency Status](https://david-dm.org/nfroidure/pg-service/dev-status.svg)](https://david-dm.org/nfroidure/pg-service#info=devDependencies)
-[![Coverage Status](https://coveralls.io/repos/nfroidure/pg-service/badge.svg?branch=master)](https://coveralls.io/r/nfroidure/pg-service?branch=master)
-[![Code Climate](https://codeclimate.com/github/nfroidure/pg-service.svg)](https://codeclimate.com/github/nfroidure/pg-service)
-[![Dependency Status](https://dependencyci.com/github/nfroidure/pg-service/badge)](https://dependencyci.com/github/nfroidure/pg-service)
-[![Package Quality](http://npm.packagequality.com/shield/pg-service.svg)](http://packagequality.com/#?package=pg-service)
+[![NPM version](https://badge.fury.io/js/postgresql-service.svg)](https://npmjs.org/package/postgresql-service)
+[![Build status](https://secure.travis-ci.org/nfroidure/postgresql-service.svg)](https://travis-ci.org/nfroidure/postgresql-service)
+[![Dependency Status](https://david-dm.org/nfroidure/postgresql-service.svg)](https://david-dm.org/nfroidure/postgresql-service)
+[![devDependency Status](https://david-dm.org/nfroidure/postgresql-service/dev-status.svg)](https://david-dm.org/nfroidure/postgresql-service#info=devDependencies)
+[![Coverage Status](https://coveralls.io/repos/nfroidure/postgresql-service/badge.svg?branch=master)](https://coveralls.io/r/nfroidure/postgresql-service?branch=master)
+[![Code Climate](https://codeclimate.com/github/nfroidure/postgresql-service.svg)](https://codeclimate.com/github/nfroidure/postgresql-service)
+[![Dependency Status](https://dependencyci.com/github/nfroidure/postgresql-service/badge)](https://dependencyci.com/github/nfroidure/postgresql-service)
+[![Package Quality](http://npm.packagequality.com/shield/postgresql-service.svg)](http://packagequality.com/#?package=postgresql-service)
 
 
 [//]: # (::contents:start)
@@ -58,7 +58,7 @@ Instantiate the pg service
 
 **Example**  
 ```js
-import initPGService from 'pg-service';
+import initPGService from 'postgresql-service';
 
 const { service: pg, dispose } = await initPGService({
   log: console.log.bind(console),
@@ -126,7 +126,7 @@ Instantiate the pg service mock
 **Returns**: <code>Promise.&lt;Object&gt;</code> - A promise of the mocked pg service stubbed with Jest  
 **Example**  
 ```js
-import initPGMock from 'pg-service/src/pg.mock';
+import initPGMock from 'postgresql-service/src/pg.mock';
 import assert from 'assert';
 
 const { service: pg, mocksClear } = await initPGMock();
@@ -148,4 +148,4 @@ assert.deepEqual(pg.mock.calls, []);
 - [Nicolas Froidure](http://insertafter.com/en/index.html)
 
 # License
-[MIT](https://github.com/nfroidure/pg-service/blob/master/LICENSE)
+[MIT](https://github.com/nfroidure/postgresql-service/blob/master/LICENSE)

@@ -21,7 +21,7 @@ export default reuseSpecialProps(initPGService, initPGMock);
  * @return {Promise<Object>}
  * A promise of the mocked pg service stubbed with Jest
  * @example
- * import initPGMock from 'pg-service/src/pg.mock';
+ * import initPGMock from 'postgresql-service/src/pg.mock';
  * import assert from 'assert';
  *
  * const { service: pg, mocksClear } = await initPGMock();

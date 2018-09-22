@@ -27,7 +27,7 @@ Instantiate the pg service
 
 **Example**  
 ```js
-import initPGService from 'pg-service';
+import initPGService from 'postgresql-service';
 
 const { service: pg, dispose } = await initPGService({
   log: console.log.bind(console),
@@ -95,7 +95,7 @@ Instantiate the pg service mock
 **Returns**: <code>Promise.&lt;Object&gt;</code> - A promise of the mocked pg service stubbed with Jest  
 **Example**  
 ```js
-import initPGMock from 'pg-service/src/pg.mock';
+import initPGMock from 'postgresql-service/src/pg.mock';
 import assert from 'assert';
 
 const { service: pg, mocksClear } = await initPGMock();
