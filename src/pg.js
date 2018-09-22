@@ -104,7 +104,7 @@ async function initPGService({ ENV = {}, PG = {}, log = noop }) {
    * @return {Array<String>}   Queries to execute
    * @return {Object}          Arguments hashes for the queries
    * @example
-   * const { rows, fields } = await pg.queries([
+   * const [{ rows, fields }, { rows2, fields2 }] = await pg.queries([
    *    'SELECT * FROM users WHERE user = $$userId',
    *    'SELECT * FROM users WHERE user = $$userId',
    * ], { userId: 1 });

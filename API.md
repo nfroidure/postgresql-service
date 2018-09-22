@@ -67,7 +67,7 @@ Executes the given queries in parallel (using the connections pool)
 **Returns**: <code>Array.&lt;String&gt;</code> - Queries to execute<code>Object</code> - Arguments hashes for the queries  
 **Example**  
 ```js
-const { rows, fields } = await pg.queries([
+const [{ rows, fields }, { rows2, fields2 }] = await pg.queries([
    'SELECT * FROM users WHERE user = $$userId',
    'SELECT * FROM users WHERE user = $$userId',
 ], { userId: 1 });
