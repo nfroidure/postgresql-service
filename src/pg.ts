@@ -1,6 +1,10 @@
-import { initializer } from 'knifecycle';
+import { options, provider, autoInject } from 'knifecycle';
+import { LogService } from 'common-services';
+// @ts-ignore: no type atm  ¯\_(ツ)_/¯
 import YError from 'yerror';
-import { Pool, types } from 'pg';
+// @ts-ignore: no type atm  ¯\_(ツ)_/¯
+import { Pool, types, PoolConfig, QueryResult } from 'pg';
+// @ts-ignore: no type atm  ¯\_(ツ)_/¯
 import { parse as parseConnectionURL } from 'pg-connection-string';
 
 /* Architecture Note #1.3: Timezones
@@ -13,14 +17,39 @@ See https://github.com/vitaly-t/pg-promise/issues/389
 // 1182 - date[]
 */
 
-types.setTypeParser(
-  1114,
-  str => (str === null ? null : new Date(str.replace(' ', 'T') + 'Z')),
+types.setTypeParser(1114, str =>
+  str === null ? null : new Date(str.replace(' ', 'T') + 'Z'),
 );
-types.setTypeParser(
-  1082,
-  str => (str === null ? null : new Date(str + 'T00:00:00Z')),
+types.setTypeParser(1082, str =>
+  str === null ? null : new Date(str + 'T00:00:00Z'),
 );
+
+
+const DEFAULT_ENV: PG_ENV = {};
+
+type PG_CONFIG = PoolConfig;
+
+interface PG_ENV {
+  PG_URL?: string;
+}
+
+interface PGServiceDependencies {
+  ENV?: PG_ENV;
+  PG: PG_CONFIG;
+  log?: LogService;
+}
+
+export interface PGService {
+  query: (query: string, args: { [name: string]: any }) => Promise<QueryResult>;
+  queries: (queries: string[], args: { [name: string]: any }) => Promise<QueryResult[]>;
+  transaction: (queries: string[], args: { [name: string]: any }) => Promise<QueryResult[]>;
+}
+
+export interface PGProvider {
+  service: PGService,
+  errorPromise: Promise<void>,
+  dispose: () => Promise<void>,
+}
 
 /* Architecture Note #1: PostgreSQL service
 
@@ -29,20 +58,20 @@ This service is a simple wrapper around the `pg` node module.
 API Doc: https://node-postgres.com/features/pooling
 */
 
-export default initializer(
-  {
-    name: 'pg',
-    inject: ['?ENV', '?PG', '?log'],
-  },
-  initPGService,
+export default options(
+  { singleton: true },
+  provider(autoInject(initPGService), 'pg'),
+  false,
 );
 
 /**
  * Instantiate the pg service
+ * @name initPGService
+ * @function
  * @param  {Object}   services           The services to inject
  * @param  {Function} [services.log]     A logging function
  * @param  {Object}   [services.ENV]     An environment object
- * @param  {Object}   [services.PG]      A `pg` compatible configuration object
+ * @param  {Object}   services.PG      A `pg` compatible configuration object
  * @return {Promise<Object>}             A promise of the pg service
  * @example
  * import initPGService from 'postgresql-service';
@@ -56,7 +85,11 @@ export default initializer(
  *
  * await dispose();
  */
-async function initPGService({ ENV = {}, PG = {}, log = noop }) {
+async function initPGService({
+  ENV = {},
+  PG,
+  log = noop
+}: PGServiceDependencies): Promise<PGProvider> {
   const config = {
     ...PG,
     ...(ENV.PG_URL ? parseConnectionURL(ENV.PG_URL) : {}),
@@ -67,7 +100,7 @@ async function initPGService({ ENV = {}, PG = {}, log = noop }) {
     queries,
     transaction,
   };
-  const errorPromise = new Promise((resolve, reject) => {
+  const errorPromise: Promise<void> = new Promise((resolve, reject) => {
     pool.once('error', err => {
       const castedError = YError.wrap(err);
       log('error', 'Got a PG error:', castedError.stack);
@@ -115,11 +148,15 @@ async function initPGService({ ENV = {}, PG = {}, log = noop }) {
 
     try {
       results = await Promise.all(
-        queries.map(query =>
-          client.query(...prepareQuery(query, args)).catch(err => {
+        queries.map(async query => {
+          const { preparedQuery, preparedArgs } = prepareQuery(query, args);
+
+          try {
+            return client.query(preparedQuery, preparedArgs);
+          } catch (err) {
             castPGQueryError(err, query, args);
-          }),
-        ),
+          }
+        }),
       );
     } finally {
       await client.release();
@@ -144,11 +181,15 @@ async function initPGService({ ENV = {}, PG = {}, log = noop }) {
       await client.query('BEGIN');
       try {
         results = await Promise.all(
-          queries.map(query =>
-            client.query(...prepareQuery(query, args)).catch(err => {
+          queries.map(query => {
+            const { preparedQuery, preparedArgs } = prepareQuery(query, args);
+
+            try {
+              return client.query(preparedQuery, preparedArgs);
+            } catch (err) {
               castPGQueryError(err, query, args);
-            }),
-          ),
+            }
+          }),
         );
       } catch (err) {
         const castedError = YError.cast(err, 'E_PG_TRANSACTION', queries, args);
@@ -177,7 +218,7 @@ The `pg` module uses simple `$n` placeholder for queries values
 
 It also adds check to ensure the provided arguments exists.
 */
-export function prepareQuery(query, args = {}) {
+export function prepareQuery(query, args) {
   let argsCount = 0;
   const argsHash = {};
   const preparedQuery = query.replace(/\$\$([a-zA-Z0-9_]+)/gm, (_, prop) => {
@@ -196,7 +237,7 @@ export function prepareQuery(query, args = {}) {
       (_, index) =>
         args[Object.keys(argsHash).find(key => argsHash[key] === index)],
     );
-  return [preparedQuery, preparedArgs];
+  return { preparedQuery, preparedArgs };
 }
 
 /* Architecture Note #1.2: Errors casting
@@ -217,4 +258,4 @@ function castPGQueryError(err, query, args) {
   });
 }
 
-function noop() {}
+function noop() { }
