@@ -7,14 +7,14 @@
 # postgresql-service
 > A simple wrapper around `node-pg`
 
-[![NPM version](https://badge.fury.io/js/postgresql-service.svg)](https://npmjs.org/package/postgresql-service)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/nfroidure/postgresql-service/blob/master/LICENSE)
 [![Build status](https://secure.travis-ci.org/nfroidure/postgresql-service.svg)](https://travis-ci.org/nfroidure/postgresql-service)
+[![Coverage Status](https://coveralls.io/repos/nfroidure/postgresql-service/badge.svg?branch=master)](https://coveralls.io/r/nfroidure/postgresql-service?branch=master)
+[![NPM version](https://badge.fury.io/js/postgresql-service.svg)](https://npmjs.org/package/postgresql-service)
 [![Dependency Status](https://david-dm.org/nfroidure/postgresql-service.svg)](https://david-dm.org/nfroidure/postgresql-service)
 [![devDependency Status](https://david-dm.org/nfroidure/postgresql-service/dev-status.svg)](https://david-dm.org/nfroidure/postgresql-service#info=devDependencies)
-[![Coverage Status](https://coveralls.io/repos/nfroidure/postgresql-service/badge.svg?branch=master)](https://coveralls.io/r/nfroidure/postgresql-service?branch=master)
-[![Code Climate](https://codeclimate.com/github/nfroidure/postgresql-service.svg)](https://codeclimate.com/github/nfroidure/postgresql-service)
-[![Dependency Status](https://dependencyci.com/github/nfroidure/postgresql-service/badge)](https://dependencyci.com/github/nfroidure/postgresql-service)
 [![Package Quality](http://npm.packagequality.com/shield/postgresql-service.svg)](http://packagequality.com/#?package=postgresql-service)
+[![Code Climate](https://codeclimate.com/github/nfroidure/postgresql-service.svg)](https://codeclimate.com/github/nfroidure/postgresql-service)
 
 
 [//]: # (::contents:start)

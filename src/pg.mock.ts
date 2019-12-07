@@ -62,7 +62,7 @@ function buildMockImplementation(jestFn) {
   jestFn.mockResultOnce = result =>
     jestFn.mockImplementationOnce((queries, args) => {
       (queries instanceof Array ? queries : [queries]).forEach(query => {
-        const [preparedQuery, preparedArgs] = prepareQuery(query, args);
+        const { preparedQuery, preparedArgs } = prepareQuery(query, args);
         const builtQuery = preparedQuery.replace(/\$(\d+)/g, (_, num) => {
           const index = parseInt(num, 10) - 1;
 
