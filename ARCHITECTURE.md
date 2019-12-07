@@ -13,7 +13,7 @@ This service is a simple wrapper around the `pg` node module.
 
 API Doc: https://node-postgres.com/features/pooling
 
-[See in context](./src/pg.js#L25-L30)
+[See in context](./src/pg.ts#L59-L64)
 
 
 
@@ -30,7 +30,7 @@ The `pg` module uses simple `$n` placeholder for queries values
 
 It also adds check to ensure the provided arguments exists.
 
-[See in context](./src/pg.js#L167-L179)
+[See in context](./src/pg.ts#L213-L225)
 
 
 
@@ -39,7 +39,7 @@ It also adds check to ensure the provided arguments exists.
 This service also convert `pg` errors into `yerror` ones which taste
  better imo.
 
-[See in context](./src/pg.js#L202-L206)
+[See in context](./src/pg.ts#L248-L252)
 
 
 
@@ -52,7 +52,7 @@ Its purpose it to ensure queries are well formed while mocking
  in the tests and that the values placeholder really have a value
  associated to it in the values hash.
 
-[See in context](./src/pg.mock.js#L7-L15)
+[See in context](./src/pg.mock.ts#L7-L15)
 
 
 
@@ -65,5 +65,5 @@ See https://github.com/vitaly-t/pg-promise/issues/389
 // 1115 - timestamp without time zone[]
 // 1182 - date[]
 
-[See in context](./src/pg.js#L6-L14)
+[See in context](./src/pg.ts#L10-L18)
 

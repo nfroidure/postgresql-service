@@ -24,7 +24,6 @@ types.setTypeParser(1082, str =>
   str === null ? null : new Date(str + 'T00:00:00Z'),
 );
 
-
 const DEFAULT_ENV: PG_ENV = {};
 
 type PG_CONFIG = PoolConfig;
@@ -41,14 +40,20 @@ interface PGServiceDependencies {
 
 export interface PGService {
   query: (query: string, args: { [name: string]: any }) => Promise<QueryResult>;
-  queries: (queries: string[], args: { [name: string]: any }) => Promise<QueryResult[]>;
-  transaction: (queries: string[], args: { [name: string]: any }) => Promise<QueryResult[]>;
+  queries: (
+    queries: string[],
+    args: { [name: string]: any },
+  ) => Promise<QueryResult[]>;
+  transaction: (
+    queries: string[],
+    args: { [name: string]: any },
+  ) => Promise<QueryResult[]>;
 }
 
 export interface PGProvider {
-  service: PGService,
-  errorPromise: Promise<void>,
-  dispose: () => Promise<void>,
+  service: PGService;
+  errorPromise: Promise<void>;
+  dispose: () => Promise<void>;
 }
 
 /* Architecture Note #1: PostgreSQL service
@@ -88,7 +93,7 @@ export default options(
 async function initPGService({
   ENV = {},
   PG,
-  log = noop
+  log = noop,
 }: PGServiceDependencies): Promise<PGProvider> {
   const config = {
     ...PG,
@@ -258,4 +263,4 @@ function castPGQueryError(err, query, args) {
   });
 }
 
-function noop() { }
+function noop() {}

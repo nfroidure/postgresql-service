@@ -5,7 +5,7 @@
   "main": "dist/pg.js",
   "types": "src/pg.d.ts",
   "scripts": {
-    "architecture": "jsarch src/*.js > ARCHITECTURE.md && git add ARCHITECTURE.md",
+    "architecture": "jsarch src/*.ts > ARCHITECTURE.md && git add ARCHITECTURE.md",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s && git add CHANGELOG.md",
     "cli": "env NODE_ENV=${NODE_ENV:-cli}",
     "compile": "babel --extensions '.ts,.js' src --out-dir=dist",
@@ -14,10 +14,10 @@
     "cz": "env NODE_ENV=${NODE_ENV:-cli} git cz",
     "doc": "echo \"# API\" > API.md; jsdoc2md 'dist/**/*.js' >> API.md && git add API.md",
     "jest": "NODE_ENV=test jest",
-    "lint": "eslint src/*.js",
+    "lint": "eslint src/*.ts",
     "metapak": "metapak",
     "precz": "npm t && npm run lint && npm run metapak -- -s && npm run architecture && npm run doc && npm run types",
-    "prettier": "prettier --write src/*.js",
+    "prettier": "prettier --write src/*.ts",
     "preversion": "npm t && npm run lint && npm run metapak -- -s && npm run compile && npm run architecture && npm run doc && npm run types",
     "test": "npm run jest",
     "types": "rm src/*.d.ts; tsc --project . --declaration --emitDeclarationOnly; npm run prettier -- src/*.d.ts",
@@ -25,8 +25,8 @@
   },
   "metapak": {
     "data": {
-      "files": "src/*.js",
-      "testFiles": "src/*.test.js",
+      "files": "src/*.ts",
+      "testFiles": "src/*.test.ts",
       "distFiles": "'dist/**/*.js'",
       "typesFiles": "src/*.ts",
       "typesDefs": "src/*.d.ts",
