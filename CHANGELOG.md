@@ -1,3 +1,12 @@
+# [1.2.0](https://github.com/nfroidure/postgresql-service/compare/v1.1.0...v1.2.0) (2020-03-20)
+
+
+### Features
+
+* **types:** export more types ([3c587c6](https://github.com/nfroidure/postgresql-service/commit/3c587c63b99a30b06c5a7309c918cbe5cbc93ebb))
+
+
+
 # [1.1.0](https://github.com/nfroidure/postgresql-service/compare/v1.0.0...v1.1.0) (2019-12-07)
 
 
