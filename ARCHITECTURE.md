@@ -13,7 +13,7 @@ This service is a simple wrapper around the `pg` node module.
 
 API Doc: https://node-postgres.com/features/pooling
 
-[See in context](./src/pg.ts#L59-L64)
+[See in context](./src/pg.ts#L60-L65)
 
 
 
@@ -30,7 +30,7 @@ The `pg` module uses simple `$n` placeholder for queries values
 
 It also adds check to ensure the provided arguments exists.
 
-[See in context](./src/pg.ts#L213-L225)
+[See in context](./src/pg.ts#L214-L226)
 
 
 
@@ -39,7 +39,7 @@ It also adds check to ensure the provided arguments exists.
 This service also convert `pg` errors into `yerror` ones which taste
  better imo.
 
-[See in context](./src/pg.ts#L248-L252)
+[See in context](./src/pg.ts#L249-L253)
 
 
 

@@ -34,8 +34,6 @@
         "dist"
       ],
       "bundleFiles": [
-        "dist/**/*.js",
-        "src/pg.d.ts",
         "dist",
         "src"
       ]
@@ -142,8 +140,6 @@
     ]
   },
   "files": [
-    "dist/**/*.js",
-    "src/pg.d.ts",
     "dist",
     "src",
     "LICENSE",

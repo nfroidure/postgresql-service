@@ -24,19 +24,20 @@ types.setTypeParser(1082, str =>
   str === null ? null : new Date(str + 'T00:00:00Z'),
 );
 
-const DEFAULT_ENV: PG_ENV = {};
-
 type PG_CONFIG = PoolConfig;
 
-interface PG_ENV {
+export type PG_ENV = {
   PG_URL?: string;
-}
+};
 
-interface PGServiceDependencies {
+export type PGServiceConfig = {
   ENV?: PG_ENV;
   PG: PG_CONFIG;
+};
+
+export type PGServiceDependencies = PGServiceConfig & {
   log?: LogService;
-}
+};
 
 export interface PGService {
   query: (query: string, args: { [name: string]: any }) => Promise<QueryResult>;
@@ -112,15 +113,15 @@ async function initPGService({
       reject(castedError);
     });
   });
-  log('debug', 'Initializing PG service... 🐘');
+  log('debug', '🐘 - Initializing PG service...');
 
   return {
     service: pg,
     errorPromise,
     dispose: async () => {
-      log('debug', 'Draining PG connections... 🐘');
+      log('debug', '🐘 - Draining PG connections... 🐘');
       await pool.end();
-      log('debug', 'PG connections drained ! 🐘');
+      log('debug', '🐘 - PG connections drained ! 🐘');
     },
   };
 

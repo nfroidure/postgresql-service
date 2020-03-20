@@ -6,7 +6,7 @@ exports[`initPGService should work 1`] = `
 Array [
   Array [
     "debug",
-    "Initializing PG service... 🐘",
+    "🐘 - Initializing PG service...",
   ],
 ]
 `;
@@ -15,7 +15,7 @@ exports[`initPGService should work with Knifecycle 1`] = `
 Array [
   Array [
     "debug",
-    "Initializing PG service... 🐘",
+    "🐘 - Initializing PG service...",
   ],
 ]
 `;

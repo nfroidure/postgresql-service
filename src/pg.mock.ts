@@ -46,7 +46,7 @@ async function initPGMock() {
       transaction: buildMockImplementation(jest.fn()),
     },
     dispose: jest.fn(),
-    errorPromise: Promise.resolve(),
+    errorPromise: new Promise(() => {}),
     mocksClear: () => {
       pgProvider.service.query.mockClear();
       pgProvider.service.queries.mockClear();
