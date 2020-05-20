@@ -100,7 +100,7 @@ async function initPGService({
     ...PG,
     ...(ENV.PG_URL ? parseConnectionURL(ENV.PG_URL) : {}),
   };
-  const pool = new Pool(config);
+  const pool = new Pool(config as PoolConfig);
   const pg = {
     query,
     queries,
