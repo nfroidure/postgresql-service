@@ -1,3 +1,12 @@
+## [1.2.2](https://github.com/nfroidure/postgresql-service/compare/v1.2.1...v1.2.2) (2020-05-22)
+
+
+### Bug Fixes
+
+* **packages:** fix packages lock ([00afc6b](https://github.com/nfroidure/postgresql-service/commit/00afc6ba9ffe9e0ec1f3c183667e4cd524c705ec))
+
+
+
 ## [1.2.1](https://github.com/nfroidure/postgresql-service/compare/v1.2.0...v1.2.1) (2020-05-20)
 
 
