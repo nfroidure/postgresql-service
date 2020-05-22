@@ -17,10 +17,10 @@ See https://github.com/vitaly-t/pg-promise/issues/389
 // 1182 - date[]
 */
 
-types.setTypeParser(1114, str =>
+types.setTypeParser(1114, (str) =>
   str === null ? null : new Date(str.replace(' ', 'T') + 'Z'),
 );
-types.setTypeParser(1082, str =>
+types.setTypeParser(1082, (str) =>
   str === null ? null : new Date(str + 'T00:00:00Z'),
 );
 
@@ -107,7 +107,7 @@ async function initPGService({
     transaction,
   };
   const errorPromise: Promise<void> = new Promise((resolve, reject) => {
-    pool.once('error', err => {
+    pool.once('error', (err) => {
       const castedError = YError.wrap(err);
       log('error', 'Got a PG error:', castedError.stack);
       reject(castedError);
@@ -154,7 +154,7 @@ async function initPGService({
 
     try {
       results = await Promise.all(
-        queries.map(async query => {
+        queries.map(async (query) => {
           const { preparedQuery, preparedArgs } = prepareQuery(query, args);
 
           try {
@@ -187,7 +187,7 @@ async function initPGService({
       await client.query('BEGIN');
       try {
         results = await Promise.all(
-          queries.map(query => {
+          queries.map((query) => {
             const { preparedQuery, preparedArgs } = prepareQuery(query, args);
 
             try {
@@ -241,7 +241,7 @@ export function prepareQuery(query, args) {
     .fill('')
     .map(
       (_, index) =>
-        args[Object.keys(argsHash).find(key => argsHash[key] === index)],
+        args[Object.keys(argsHash).find((key) => argsHash[key] === index)],
     );
   return { preparedQuery, preparedArgs };
 }
