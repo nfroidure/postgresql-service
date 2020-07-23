@@ -82,7 +82,7 @@
     "@babel/preset-typescript": "^7.9.0",
     "@babel/register": "^7.9.0",
     "@types/jest": "^25.2.2",
-    "@types/pg": "^7.14.3",
+    "@types/pg": "^7.14.4",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",
     "babel-eslint": "^10.1.0",
@@ -103,9 +103,9 @@
     "typescript": "^3.9.2"
   },
   "dependencies": {
-    "common-services": "^7.1.4",
+    "common-services": "^7.1.5",
     "knifecycle": "^9.1.1",
-    "pg": "^8.2.1",
+    "pg": "^8.3.0",
     "pg-query-parser": "^0.2.4"
   },
   "contributors": [],

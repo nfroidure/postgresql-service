@@ -154,16 +154,31 @@ async function initPGService({
 
     try {
       results = await Promise.all(
-        queries.map(async (query) => {
+        queries.map(async (query, index) => {
           const { preparedQuery, preparedArgs } = prepareQuery(query, args);
 
           try {
-            return client.query(preparedQuery, preparedArgs);
+            return await client.query(preparedQuery, preparedArgs);
           } catch (err) {
-            castPGQueryError(err, query, args);
+            throw castPGQueryError(err, query, args, index);
           }
         }),
       );
+    } catch (err) {
+      console.log('ERRR, PGPGPGPG2', err.params);
+      const castedError = YError.cast(
+        err,
+        'E_PG_QUERIES',
+        queries,
+        args,
+        err.code === 'E_PG_QUERY'
+          ? err.params && typeof err.params[2] === 'object'
+            ? err.params[2]
+            : {}
+          : {},
+      );
+
+      throw castedError;
     } finally {
       await client.release();
     }
@@ -187,18 +202,30 @@ async function initPGService({
       await client.query('BEGIN');
       try {
         results = await Promise.all(
-          queries.map((query) => {
+          queries.map(async (query, index) => {
             const { preparedQuery, preparedArgs } = prepareQuery(query, args);
 
             try {
-              return client.query(preparedQuery, preparedArgs);
+              return await client.query(preparedQuery, preparedArgs);
             } catch (err) {
-              castPGQueryError(err, query, args);
+              throw castPGQueryError(err, query, args, index);
             }
           }),
         );
       } catch (err) {
-        const castedError = YError.cast(err, 'E_PG_TRANSACTION', queries, args);
+        console.log('ERRR, PGPGPGPG', err.params);
+        const castedError = YError.cast(
+          err,
+          'E_PG_TRANSACTION',
+          queries,
+          args,
+          err.code === 'E_PG_QUERY'
+            ? err.params && typeof err.params[2] === 'object'
+              ? err.params[2]
+              : {}
+            : {},
+        );
+
         await client.query('ROLLBACK');
         throw castedError;
       }
@@ -251,16 +278,26 @@ export function prepareQuery(query, args) {
 This service also convert `pg` errors into `yerror` ones which taste
  better imo.
 */
-function castPGQueryError(err, query, args) {
-  throw YError.wrap(err, 'E_PG_QUERY', query, args, {
-    code: err.code,
-    detail: err.detail,
-    schema: err.schema,
-    table: err.table,
-    constraint: err.constraint,
-    file: err.file,
-    line: err.line,
-    routine: err.routine,
+function castPGQueryError(
+  err: Error,
+  query: string,
+  args: any[],
+  index: number,
+) {
+  return YError.wrap(err, 'E_PG_QUERY', query, args, {
+    index,
+    code: (err as any).code || undefined,
+    name: (err as any).name || undefined,
+    severity: (err as any).severity || undefined,
+    detail: (err as any).detail || undefined,
+    schema: (err as any).schema || undefined,
+    table: (err as any).table || undefined,
+    column: (err as any).column || undefined,
+    dataType: (err as any).dataType || undefined,
+    constraint: (err as any).constraint || undefined,
+    file: (err as any).file || undefined,
+    line: (err as any).line || undefined,
+    routine: (err as any).routine || undefined,
   });
 }
 
