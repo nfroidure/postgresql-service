@@ -165,7 +165,6 @@ async function initPGService({
         }),
       );
     } catch (err) {
-      console.log('ERRR, PGPGPGPG2', err.params);
       const castedError = YError.cast(
         err,
         'E_PG_QUERIES',
@@ -213,7 +212,6 @@ async function initPGService({
           }),
         );
       } catch (err) {
-        console.log('ERRR, PGPGPGPG', err.params);
         const castedError = YError.cast(
           err,
           'E_PG_TRANSACTION',

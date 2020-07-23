@@ -30,7 +30,7 @@ The `pg` module uses simple `$n` placeholder for queries values
 
 It also adds check to ensure the provided arguments exists.
 
-[See in context](./src/pg.ts#L241-L253)
+[See in context](./src/pg.ts#L239-L251)
 
 
 
@@ -39,7 +39,7 @@ It also adds check to ensure the provided arguments exists.
 This service also convert `pg` errors into `yerror` ones which taste
  better imo.
 
-[See in context](./src/pg.ts#L276-L280)
+[See in context](./src/pg.ts#L274-L278)
 
 
 
