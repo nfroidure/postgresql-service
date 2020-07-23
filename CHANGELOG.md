@@ -1,3 +1,12 @@
+## [1.2.4](https://github.com/nfroidure/postgresql-service/compare/v1.2.3...v1.2.4) (2020-07-23)
+
+
+### Bug Fixes
+
+* **dev:** remove dev console logs ([504484c](https://github.com/nfroidure/postgresql-service/commit/504484c9c2af21ff8cc6aeb889b8db87d2169f1b))
+
+
+
 ## [1.2.3](https://github.com/nfroidure/postgresql-service/compare/v1.2.2...v1.2.3) (2020-07-23)
 
 
