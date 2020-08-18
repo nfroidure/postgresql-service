@@ -1,11 +1,16 @@
 import { options, provider, autoInject } from 'knifecycle';
-import { LogService } from 'common-services';
-// @ts-ignore: no type atm  ¯\_(ツ)_/¯
 import YError from 'yerror';
-// @ts-ignore: no type atm  ¯\_(ツ)_/¯
-import { Pool, types, PoolConfig, QueryResult } from 'pg';
-// @ts-ignore: no type atm  ¯\_(ツ)_/¯
-import { parse as parseConnectionURL } from 'pg-connection-string';
+import pgConnectionString from 'pg-connection-string';
+import pg from 'pg';
+import sql, { joinSQLValues, createSQLPart, escapeIdentifier } from './sql';
+import type { PoolConfig, QueryResult } from 'pg';
+import type { LogService } from 'common-services';
+import type { SQLValue } from './sql';
+
+// Required to work as a MJS module. Will be turnable
+// into real imports when those module will support MJS
+const { Pool, types } = pg;
+const { parse: parseConnectionURL } = pgConnectionString;
 
 /* Architecture Note #1.3: Timezones
 
@@ -24,6 +29,8 @@ types.setTypeParser(1082, (str) =>
   str === null ? null : new Date(str + 'T00:00:00Z'),
 );
 
+export { sql, joinSQLValues, createSQLPart, escapeIdentifier };
+
 type PG_CONFIG = PoolConfig;
 
 export type PG_ENV = {
@@ -39,16 +46,15 @@ export type PGServiceDependencies = PGServiceConfig & {
   log?: LogService;
 };
 
+export type PGQuery = {
+  text: string;
+  values: SQLValue[];
+};
+
 export interface PGService {
-  query: (query: string, args: { [name: string]: any }) => Promise<QueryResult>;
-  queries: (
-    queries: string[],
-    args: { [name: string]: any },
-  ) => Promise<QueryResult[]>;
-  transaction: (
-    queries: string[],
-    args: { [name: string]: any },
-  ) => Promise<QueryResult[]>;
+  query: (query: PGQuery) => Promise<QueryResult>;
+  queries: (queries: PGQuery[]) => Promise<QueryResult[]>;
+  transaction: (queries: PGQuery[]) => Promise<QueryResult[]>;
 }
 
 export interface PGProvider {
@@ -135,9 +141,10 @@ async function initPGService({
    *    { userId: 1 }
    * );
    */
-  async function query(query, args) {
-    return (await pg.queries([query], args))[0];
+  async function query(query: PGQuery) {
+    return (await pg.queries([query]))[0];
   }
+
   /**
    * Executes the given queries in parallel (using the connections pool)
    * @return {Array<String>}   Queries to execute
@@ -148,19 +155,17 @@ async function initPGService({
    *    'SELECT * FROM users WHERE user = $$userId',
    * ], { userId: 1 });
    */
-  async function queries(queries, args) {
+  async function queries(queries: PGQuery[]) {
     const client = await pool.connect();
     let results;
 
     try {
       results = await Promise.all(
         queries.map(async (query, index) => {
-          const { preparedQuery, preparedArgs } = prepareQuery(query, args);
-
           try {
-            return await client.query(preparedQuery, preparedArgs);
+            return await client.query(query);
           } catch (err) {
-            throw castPGQueryError(err, query, args, index);
+            throw castPGQueryError(err, query.text, query.values, index);
           }
         }),
       );
@@ -168,8 +173,8 @@ async function initPGService({
       const castedError = YError.cast(
         err,
         'E_PG_QUERIES',
-        queries,
-        args,
+        queries.map((query) => query.text),
+        queries.map((query) => query.values),
         err.code === 'E_PG_QUERY'
           ? err.params && typeof err.params[2] === 'object'
             ? err.params[2]
@@ -183,6 +188,7 @@ async function initPGService({
     }
     return results;
   }
+
   /**
    * Executes the given queries in a single transaction
    * @return {Array<String>}   Queries to execute
@@ -193,7 +199,7 @@ async function initPGService({
    *    'SELECT * FROM users WHERE user = $$userId',
    * ], { userId: 1 });
    */
-  async function transaction(queries, args) {
+  async function transaction(queries: PGQuery[]) {
     const client = await pool.connect();
     let results;
 
@@ -202,12 +208,10 @@ async function initPGService({
       try {
         results = await Promise.all(
           queries.map(async (query, index) => {
-            const { preparedQuery, preparedArgs } = prepareQuery(query, args);
-
             try {
-              return await client.query(preparedQuery, preparedArgs);
+              return await client.query(query);
             } catch (err) {
-              throw castPGQueryError(err, query, args, index);
+              throw castPGQueryError(err, query.text, query.values, index);
             }
           }),
         );
@@ -215,8 +219,8 @@ async function initPGService({
         const castedError = YError.cast(
           err,
           'E_PG_TRANSACTION',
-          queries,
-          args,
+          queries.map((query) => query.text),
+          queries.map((query) => query.values),
           err.code === 'E_PG_QUERY'
             ? err.params && typeof err.params[2] === 'object'
               ? err.params[2]
@@ -234,41 +238,6 @@ async function initPGService({
 
     return results;
   }
-}
-
-/* Architecture Note #1.1: Prepared queries
-
-The `pg` module uses simple `$n` placeholder for queries values
- that are provided in an array.
-
- This function adds a level of abstraction that refers to fields
- in an object instead, transforming a query executions like
- `SELECT * FROM users WHERE id=$$userId` with { userId: 1 }
- into `SELECT * FROM users WHERE id=$1` with [1] under the
- hood.
-
-It also adds check to ensure the provided arguments exists.
-*/
-export function prepareQuery(query, args) {
-  let argsCount = 0;
-  const argsHash = {};
-  const preparedQuery = query.replace(/\$\$([a-zA-Z0-9_]+)/gm, (_, prop) => {
-    if ('undefined' === typeof args[prop]) {
-      throw new YError('E_PG_LACKING_ARG', query, args, prop);
-    }
-    if ('undefined' === typeof argsHash[prop]) {
-      argsHash[prop] = argsCount++;
-    }
-    return `$${argsHash[prop] + 1}`;
-  });
-
-  const preparedArgs = new Array(argsCount)
-    .fill('')
-    .map(
-      (_, index) =>
-        args[Object.keys(argsHash).find((key) => argsHash[key] === index)],
-    );
-  return { preparedQuery, preparedArgs };
 }
 
 /* Architecture Note #1.2: Errors casting

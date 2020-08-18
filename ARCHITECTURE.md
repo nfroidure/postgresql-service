@@ -13,24 +13,22 @@ This service is a simple wrapper around the `pg` node module.
 
 API Doc: https://node-postgres.com/features/pooling
 
-[See in context](./src/pg.ts#L60-L65)
+[See in context](./src/pg.ts#L61-L66)
 
 
 
-### Prepared queries
+### Tagged template queries
 
 The `pg` module uses simple `$n` placeholder for queries values
  that are provided in an array.
 
- This function adds a level of abstraction that refers to fields
- in an object instead, transforming a query executions like
- `SELECT * FROM users WHERE id=$$userId` with { userId: 1 }
- into `SELECT * FROM users WHERE id=$1` with [1] under the
- hood.
+This tagged template function adds a level of abstraction
+ transforming the following expression:
+ `sql\`SELECT * FROM users WHERE id=${userId}\`` with `userId=1` }
+ into `{ text: 'SELECT * FROM users WHERE id=$1', values: [1] }`
+ under the hood.
 
-It also adds check to ensure the provided arguments exists.
-
-[See in context](./src/pg.ts#L239-L251)
+[See in context](./src/sql.ts#L82-L92)
 
 
 
@@ -39,7 +37,7 @@ It also adds check to ensure the provided arguments exists.
 This service also convert `pg` errors into `yerror` ones which taste
  better imo.
 
-[See in context](./src/pg.ts#L274-L278)
+[See in context](./src/pg.ts#L238-L242)
 
 
 

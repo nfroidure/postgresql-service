@@ -1,39 +1,46 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`initPGMock pg.queries should fail with lacking args 1`] = `
-Object {
-  "errorCode": "E_PG_LACKING_ARG",
-  "errorParams": Array [
-    "SELECT * FROM users WHERE id = $$userId",
-    Object {},
-    "userId",
-  ],
-}
-`;
-
 exports[`initPGMock pg.queries should work 1`] = `
 Array [
   Array [
     Array [
-      "SELECT * FROM users WHERE id = $$userId",
-      "SELECT * FROM users WHERE id = $$userId",
+      Object {
+        "data": Array [
+          "SELECT * FROM users WHERE id = $1",
+          Array [
+            1,
+          ],
+        ],
+        "parts": Array [
+          "SELECT * FROM users WHERE id = ",
+          "",
+        ],
+        "text": "SELECT * FROM users WHERE id = $1",
+        "type": Symbol(SQLStatement),
+        "values": Array [
+          1,
+        ],
+      },
+      Object {
+        "data": Array [
+          "SELECT * FROM users WHERE id = $1",
+          Array [
+            1,
+          ],
+        ],
+        "parts": Array [
+          "SELECT * FROM users WHERE id = ",
+          "",
+        ],
+        "text": "SELECT * FROM users WHERE id = $1",
+        "type": Symbol(SQLStatement),
+        "values": Array [
+          1,
+        ],
+      },
     ],
-    Object {
-      "userId": 1,
-    },
   ],
 ]
-`;
-
-exports[`initPGMock pg.query should fail with lacking args 1`] = `
-Object {
-  "errorCode": "E_PG_LACKING_ARG",
-  "errorParams": Array [
-    "SELECT * FROM users WHERE id = $$userId",
-    Object {},
-    "userId",
-  ],
-}
 `;
 
 exports[`initPGMock pg.query should fail with malformed query 1`] = `
@@ -49,35 +56,66 @@ Object {
 exports[`initPGMock pg.query should work 1`] = `
 Array [
   Array [
-    "SELECT * FROM users WHERE id = $$userId",
     Object {
-      "userId": 1,
+      "data": Array [
+        "SELECT * FROM users WHERE id = $1",
+        Array [
+          1,
+        ],
+      ],
+      "parts": Array [
+        "SELECT * FROM users WHERE id = ",
+        "",
+      ],
+      "text": "SELECT * FROM users WHERE id = $1",
+      "type": Symbol(SQLStatement),
+      "values": Array [
+        1,
+      ],
     },
   ],
 ]
-`;
-
-exports[`initPGMock pg.transaction should fail with lacking args 1`] = `
-Object {
-  "errorCode": "E_PG_LACKING_ARG",
-  "errorParams": Array [
-    "SELECT * FROM users WHERE id = $$userId",
-    Object {},
-    "userId",
-  ],
-}
 `;
 
 exports[`initPGMock pg.transaction should work 1`] = `
 Array [
   Array [
     Array [
-      "SELECT * FROM users WHERE id = $$userId",
-      "SELECT * FROM users WHERE id = $$userId",
+      Object {
+        "data": Array [
+          "SELECT * FROM users WHERE id = $1",
+          Array [
+            1,
+          ],
+        ],
+        "parts": Array [
+          "SELECT * FROM users WHERE id = ",
+          "",
+        ],
+        "text": "SELECT * FROM users WHERE id = $1",
+        "type": Symbol(SQLStatement),
+        "values": Array [
+          1,
+        ],
+      },
+      Object {
+        "data": Array [
+          "SELECT * FROM users WHERE id = $1",
+          Array [
+            1,
+          ],
+        ],
+        "parts": Array [
+          "SELECT * FROM users WHERE id = ",
+          "",
+        ],
+        "text": "SELECT * FROM users WHERE id = $1",
+        "type": Symbol(SQLStatement),
+        "values": Array [
+          1,
+        ],
+      },
     ],
-    Object {
-      "userId": 1,
-    },
   ],
 ]
 `;

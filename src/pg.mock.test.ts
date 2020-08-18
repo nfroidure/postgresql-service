@@ -1,6 +1,7 @@
 import assert from 'assert';
 import YError from 'yerror';
 import initPGMock from './pg.mock';
+import sql from './sql';
 
 describe('initPGMock', () => {
   test('should work', async () => {
@@ -15,25 +16,9 @@ describe('initPGMock', () => {
 
       pg.query.mockResultOnce({ rows: [], fields: {} });
 
-      await pg.query('SELECT * FROM users WHERE id = $$userId', { userId: 1 });
+      await pg.query(sql`SELECT * FROM users WHERE id = ${1}`);
 
       expect(pg.query.mock.calls).toMatchSnapshot();
-    });
-
-    test('should fail with lacking args', async () => {
-      const { service: pg } = await initPGMock();
-
-      pg.query.mockResultOnce({ rows: [], fields: {} });
-
-      try {
-        await pg.query('SELECT * FROM users WHERE id = $$userId', {});
-        throw new YError('E_UNEXPECTED_SUCCESS');
-      } catch (err) {
-        expect({
-          errorCode: err.code,
-          errorParams: err.params,
-        }).toMatchSnapshot();
-      }
     });
 
     test('should fail with malformed query', async () => {
@@ -42,7 +27,7 @@ describe('initPGMock', () => {
       pg.query.mockResultOnce({ rows: [], fields: {} });
 
       try {
-        await pg.query('SELECT * FROM', {});
+        await pg.query(sql`SELECT * FROM`);
         throw new YError('E_UNEXPECTED_SUCCESS');
       } catch (err) {
         expect({
@@ -59,31 +44,12 @@ describe('initPGMock', () => {
 
       pg.queries.mockResultOnce([{ rows: [], fields: {} }]);
 
-      await pg.queries(
-        [
-          'SELECT * FROM users WHERE id = $$userId',
-          'SELECT * FROM users WHERE id = $$userId',
-        ],
-        { userId: 1 },
-      );
+      await pg.queries([
+        sql`SELECT * FROM users WHERE id = ${1}`,
+        sql`SELECT * FROM users WHERE id = ${1}`,
+      ]);
 
       expect(pg.queries.mock.calls).toMatchSnapshot();
-    });
-
-    test('should fail with lacking args', async () => {
-      const { service: pg } = await initPGMock();
-
-      pg.queries.mockResultOnce([{ rows: [], fields: {} }]);
-
-      try {
-        await pg.queries(['SELECT * FROM users WHERE id = $$userId'], {});
-        throw new YError('E_UNEXPECTED_SUCCESS');
-      } catch (err) {
-        expect({
-          errorCode: err.code,
-          errorParams: err.params,
-        }).toMatchSnapshot();
-      }
     });
   });
 
@@ -93,31 +59,12 @@ describe('initPGMock', () => {
 
       pg.transaction.mockResultOnce([{ rows: [], fields: {} }]);
 
-      await pg.transaction(
-        [
-          'SELECT * FROM users WHERE id = $$userId',
-          'SELECT * FROM users WHERE id = $$userId',
-        ],
-        { userId: 1 },
-      );
+      await pg.transaction([
+        sql`SELECT * FROM users WHERE id = ${1}`,
+        sql`SELECT * FROM users WHERE id = ${1}`,
+      ]);
 
       expect(pg.transaction.mock.calls).toMatchSnapshot();
-    });
-
-    test('should fail with lacking args', async () => {
-      const { service: pg } = await initPGMock();
-
-      pg.transaction.mockResultOnce([{ rows: [], fields: {} }]);
-
-      try {
-        await pg.transaction(['SELECT * FROM users WHERE id = $$userId'], {});
-        throw new YError('E_UNEXPECTED_SUCCESS');
-      } catch (err) {
-        expect({
-          errorCode: err.code,
-          errorParams: err.params,
-        }).toMatchSnapshot();
-      }
     });
   });
 });

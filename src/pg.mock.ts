@@ -1,8 +1,8 @@
 import YError from 'yerror';
 import initPGService from './pg';
 import { reuseSpecialProps } from 'knifecycle/dist/util';
-import { prepareQuery } from './pg';
 import { parse } from 'pg-query-parser';
+import type { PGQuery } from './pg';
 
 /* Architecture Note #1.2.1: Mocking pg
 
@@ -60,24 +60,23 @@ async function initPGMock() {
 
 function buildMockImplementation(jestFn) {
   jestFn.mockResultOnce = (result) =>
-    jestFn.mockImplementationOnce((queries, args) => {
+    jestFn.mockImplementationOnce((queries: PGQuery[]) => {
       (queries instanceof Array ? queries : [queries]).forEach((query) => {
-        const { preparedQuery, preparedArgs } = prepareQuery(query, args);
-        const builtQuery = preparedQuery.replace(/\$(\d+)/g, (_, num) => {
+        const builtQuery = query.text.replace(/\$(\d+)/g, (_, num) => {
           const index = parseInt(num, 10) - 1;
 
           if (
-            typeof preparedArgs[index] === 'boolean' ||
-            typeof preparedArgs[index] === 'number'
+            typeof query.values[index] === 'boolean' ||
+            typeof query.values[index] === 'number'
           ) {
-            return preparedArgs[index].toString();
+            return query.values[index].toString();
           }
 
-          if (null === preparedArgs[index]) {
+          if (null === query.values[index]) {
             return null;
           }
 
-          return `'${preparedArgs[index].toString().replace(/'/g, "''")}'`;
+          return `'${query.values[index].toString().replace(/'/g, "''")}'`;
         });
 
         const result = parse(builtQuery);
