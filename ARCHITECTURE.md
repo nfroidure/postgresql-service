@@ -13,7 +13,7 @@ This service is a simple wrapper around the `pg` node module.
 
 API Doc: https://node-postgres.com/features/pooling
 
-[See in context](./src/pg.ts#L61-L66)
+[See in context](./src/pg.ts#L66-L71)
 
 
 
@@ -37,7 +37,7 @@ This tagged template function adds a level of abstraction
 This service also convert `pg` errors into `yerror` ones which taste
  better imo.
 
-[See in context](./src/pg.ts#L238-L242)
+[See in context](./src/pg.ts#L243-L247)
 
 
 
@@ -63,5 +63,5 @@ See https://github.com/vitaly-t/pg-promise/issues/389
 // 1115 - timestamp without time zone[]
 // 1182 - date[]
 
-[See in context](./src/pg.ts#L10-L18)
+[See in context](./src/pg.ts#L15-L23)
 
