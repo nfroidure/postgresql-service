@@ -34,48 +34,6 @@ module.
 [//]: # (::contents:end)
 
 # API
-## Members
-
-<dl>
-<dt><a href="#default">default</a> ⇒ <code>Promise.&lt;Object&gt;</code></dt>
-<dd><p>Instantiate the pg service mock</p>
-</dd>
-</dl>
-
-## Functions
-
-<dl>
-<dt><a href="#initPGService">initPGService(services)</a> ⇒ <code>Promise.&lt;Object&gt;</code></dt>
-<dd><p>Instantiate the pg service</p>
-</dd>
-</dl>
-
-<a name="default"></a>
-
-## default ⇒ <code>Promise.&lt;Object&gt;</code>
-Instantiate the pg service mock
-
-**Kind**: global variable  
-**Returns**: <code>Promise.&lt;Object&gt;</code> - A promise of the mocked pg service stubbed with Jest  
-**Example**  
-```js
-import initPGMock from 'postgresql-service/src/pg.mock';
-import assert from 'assert';
-
-const { service: pg, mocksClear } = await initPGMock();
-
-// Let's returns Thomas birth date (OMG ya father
-// talking me about its childrens :D).
-pg.query.mockResolvedValueOnce({ rows: [[1]], fields: {}});
-
-assert.deepEqual(pg.mock.calls, [[
-   'SELECT 1'
-]], 'Called once');
-
-mocksClear();
-
-assert.deepEqual(pg.mock.calls, []);
-```
 <a name="initPGService"></a>
 
 ## initPGService(services) ⇒ <code>Promise.&lt;Object&gt;</code>

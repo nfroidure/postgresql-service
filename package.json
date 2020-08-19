@@ -19,9 +19,9 @@
     "jest": "NODE_ENV=test jest",
     "lint": "eslint src/*.ts",
     "metapak": "metapak",
-    "precz": "npm t && npm run lint && npm run metapak -- -s && npm run architecture && npm run doc && npm run compile && npm run types",
+    "precz": "npm t && npm run lint && npm run architecture && npm run doc && npm run compile && npm run types && npm run metapak -- -s",
     "prettier": "prettier --write src/*.ts",
-    "preversion": "npm t && npm run lint && npm run metapak -- -s && npm run compile && npm run architecture && npm run doc && npm run types",
+    "preversion": "npm t && npm run lint && npm run compile && npm run architecture && npm run doc && npm run types && npm run metapak -- -s",
     "test": "npm run jest",
     "types": "rimraf -f 'dist/**/*.d.ts' && tsc --project . --declaration --emitDeclarationOnly --outDir dist",
     "version": "npm run changelog && git add CHANGELOG.md"
