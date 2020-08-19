@@ -26,6 +26,35 @@ This simple service covers my own usage of the `pg` module. I only
 It also sets up a few tweaks I have to do for each projects like
  avoiding to mess up with dates.
 
+## Tagged templates
+
+This module also export a tagged template function you can use
+ like that:
+```ts
+import sql, {
+  escapeSQLIdentifier,
+  sqlPart,
+  emptySQLPart,
+} from 'postgresql-service';
+
+const limit = 10;
+const query = sql`SELECT id FROM users WHERE name=${'toto'} ${
+  limit ?
+  sqlPart`LIMIT ${limit}` :
+  emptySQLPart
+}`;
+const query2 = sql`SELECT id FROM ${escapeSQLIdentifier('table')}`;
+const query3 = sql`SELECT id FROM users WHERE id IN ${
+  joinSQLValues([1, 2])
+}}`;
+const mergedQuery = `
+${query}
+UNION
+${query2}
+UNION
+${query3}
+`;
+```
 
 [//]: # (::contents:end)
 

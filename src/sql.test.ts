@@ -1,4 +1,9 @@
-import sql, { escapeIdentifier, joinSQLValues } from './sql';
+import sql, {
+  escapeSQLIdentifier,
+  joinSQLValues,
+  emptySQLPart,
+  sqlPart,
+} from './sql';
 
 describe('SQL statement', () => {
   test('should work with a raw query', () => {
@@ -26,6 +31,56 @@ describe('SQL statement', () => {
         "text": "SELECT * FROM users where id=$1",
         "values": Array [
           1,
+        ],
+      }
+    `);
+  });
+
+  test('should work with SQL parts', () => {
+    const query = sql`SELECT * FROM users where id=${1} ${sqlPart`LIMIT 1`}`;
+
+    expect({
+      text: query.text,
+      values: query.values,
+    }).toMatchInlineSnapshot(`
+      Object {
+        "text": "SELECT * FROM users where id=$1 LIMIT 1",
+        "values": Array [
+          1,
+        ],
+      }
+    `);
+  });
+
+  test('should work with empty SQL part', () => {
+    const query = sql`SELECT * FROM users where id=${1}${emptySQLPart}`;
+
+    expect({
+      text: query.text,
+      values: query.values,
+    }).toMatchInlineSnapshot(`
+      Object {
+        "text": "SELECT * FROM users where id=$1",
+        "values": Array [
+          1,
+        ],
+      }
+    `);
+  });
+
+  test('should work with parametrized SQL part', () => {
+    const query = sql`SELECT * FROM users where id=${1} ${sqlPart`LIMIT ${0}, ${10}`}`;
+
+    expect({
+      text: query.text,
+      values: query.values,
+    }).toMatchInlineSnapshot(`
+      Object {
+        "text": "SELECT * FROM users where id=$1 LIMIT $2, $3",
+        "values": Array [
+          1,
+          0,
+          10,
         ],
       }
     `);
@@ -97,7 +152,7 @@ describe('SQL statement', () => {
   });
 
   test('should work with custom identifiers', () => {
-    const query = sql`INSERT INTO ${escapeIdentifier(
+    const query = sql`INSERT INTO ${escapeSQLIdentifier(
       'users',
     )} (id, name, preferences, creation) VALUES (${1}, ${'paul'}, ${{
       silent: true,
@@ -122,14 +177,14 @@ describe('SQL statement', () => {
   });
 
   test('should work with several custom identifiers', () => {
-    const query = sql`INSERT INTO ${escapeIdentifier(
+    const query = sql`INSERT INTO ${escapeSQLIdentifier(
       'users',
-    )},  ${escapeIdentifier(
+    )},  ${escapeSQLIdentifier(
       'members',
     )} (id, name, preferences, creation) VALUES (${1}, ${'paul'}, ${{
       silent: true,
     }}, ${new Date(0)}) AND (
-        SELECT COUNT(*) FROM  ${escapeIdentifier('users')} > 1
+        SELECT COUNT(*) FROM  ${escapeSQLIdentifier('users')} > 1
     )`;
 
     expect({

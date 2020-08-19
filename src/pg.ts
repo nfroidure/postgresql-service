@@ -2,7 +2,7 @@ import { options, provider, autoInject } from 'knifecycle';
 import YError from 'yerror';
 import pgConnectionString from 'pg-connection-string';
 import pg from 'pg';
-import sql, { joinSQLValues, createSQLPart, escapeIdentifier } from './sql';
+import sql, { joinSQLValues, createSQLPart, escapeSQLIdentifier } from './sql';
 import type { PoolConfig, QueryResult } from 'pg';
 import type { LogService } from 'common-services';
 import type { SQLValue } from './sql';
@@ -29,7 +29,7 @@ types.setTypeParser(1082, (str) =>
   str === null ? null : new Date(str + 'T00:00:00Z'),
 );
 
-export { sql, joinSQLValues, createSQLPart, escapeIdentifier };
+export { sql, joinSQLValues, createSQLPart, escapeSQLIdentifier };
 
 type PG_CONFIG = PoolConfig;
 

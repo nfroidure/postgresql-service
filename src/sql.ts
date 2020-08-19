@@ -11,12 +11,12 @@ export type SQLStatement = {
   parts: string[];
   values: SQLValue[];
   text: string;
-  data: [string, SQLValue[]];
 };
 
 export type SQLPart = {
   type: typeof SQLPartTypeSymbol;
-  text: string;
+  parts: string[];
+  values: SQLValue[];
 };
 
 export type SQLValues = {
@@ -42,15 +42,15 @@ export const joinSQLValues = (values: SQLValue[]): SQLValues => {
 export const createSQLPart = (str: string): SQLPart => {
   return {
     type: SQLPartTypeSymbol,
-    text: str,
+    parts: [str],
+    values: [],
   };
 };
 
-export const escapeIdentifier = (str: string): SQLPart => {
-  return {
-    type: SQLPartTypeSymbol,
-    text: '"' + str.replace(/"/g, '""') + '"',
-  };
+export const emptySQLPart = createSQLPart('');
+
+export const escapeSQLIdentifier = (str: string): SQLPart => {
+  return createSQLPart('"' + str.replace(/"/g, '""') + '"');
 };
 
 function isSQLValues(value: SQLStringLiteralParameter): value is SQLValues {
@@ -94,6 +94,34 @@ export default function sql<T extends SQLStringLiteralParameter[]>(
   chunks: TemplateStringsArray,
   ...parameters: T
 ): SQLStatement {
+  const { parts, values } = mergeSQLChunks(chunks, parameters);
+  return {
+    type: SQLStatementTypeSymbol,
+    parts,
+    values,
+    get text() {
+      return this.parts.reduce(
+        (text: string, part: string, index: number) =>
+          text + part + (index < this.values.length ? '$' + (index + 1) : ''),
+        '',
+      );
+    },
+  };
+}
+
+export function sqlPart<T extends SQLStringLiteralParameter[]>(
+  chunks: TemplateStringsArray,
+  ...parameters: T
+): SQLPart {
+  const { parts, values } = mergeSQLChunks(chunks, parameters);
+  return {
+    type: SQLPartTypeSymbol,
+    parts,
+    values,
+  };
+}
+
+function mergeSQLChunks(chunks, parameters) {
   const parts = [];
   const values: SQLValue[] = [];
   const parametersLength = parameters.length;
@@ -110,15 +138,7 @@ export default function sql<T extends SQLStringLiteralParameter[]>(
       continue;
     }
 
-    if (isSQLPart(parameters[i])) {
-      if (unterminatedPart) {
-        parts.push(
-          (parts.pop() || '') + chunks[i] + (parameters[i] as SQLPart).text,
-        );
-      } else {
-        parts.push(chunks[i] + (parameters[i] as SQLPart).text);
-      }
-    } else if (isSQLStatement(parameters[i])) {
+    if (isSQLStatement(parameters[i]) || isSQLPart(parameters[i])) {
       if (unterminatedPart) {
         parts.push(
           (parts.pop() || '') +
@@ -151,18 +171,7 @@ export default function sql<T extends SQLStringLiteralParameter[]>(
   }
 
   return {
-    type: SQLStatementTypeSymbol,
     parts,
     values,
-    get text() {
-      return this.parts.reduce(
-        (text: string, part: string, index: number) =>
-          text + part + (index < this.values.length ? '$' + (index + 1) : ''),
-        '',
-      );
-    },
-    get data(): [string, SQLValue[]] {
-      return [this.text, this.values];
-    },
   };
 }
