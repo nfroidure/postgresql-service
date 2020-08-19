@@ -1,13 +1,16 @@
 import { options, provider, autoInject } from 'knifecycle';
-import { LogService } from 'common-services';
-// @ts-ignore: no type atm  ¯\_(ツ)_/¯
 import YError from 'yerror';
-// @ts-ignore: no type atm  ¯\_(ツ)_/¯
-import { Pool, types, PoolConfig, QueryResult } from 'pg';
-// @ts-ignore: no type atm  ¯\_(ツ)_/¯
-import { parse as parseConnectionURL } from 'pg-connection-string';
+import pgConnectionString from 'pg-connection-string';
+import pg from 'pg';
+import type { PoolConfig, QueryResult } from 'pg';
+import type { LogService } from 'common-services';
 
-/* Architecture Note #1.3: Timezones
+// Required to work as a MJS module. Will be turnable
+// into real imports when those module will support MJS
+const { Pool, types } = pg;
+const { parse: parseConnectionURL } = pgConnectionString;
+
+/* Architecture Note #1.2: Timezones
 
 Ensure not messing with time zones with practical defaults.
 See https://github.com/vitaly-t/pg-promise/issues/389
@@ -25,6 +28,7 @@ types.setTypeParser(1082, (str) =>
 );
 
 type PG_CONFIG = PoolConfig;
+type SQLValue = any;
 
 export type PG_ENV = {
   PG_URL?: string;
@@ -39,16 +43,15 @@ export type PGServiceDependencies = PGServiceConfig & {
   log?: LogService;
 };
 
+export type PGQuery = {
+  text: string;
+  values: SQLValue[];
+};
+
 export interface PGService {
-  query: (query: string, args: { [name: string]: any }) => Promise<QueryResult>;
-  queries: (
-    queries: string[],
-    args: { [name: string]: any },
-  ) => Promise<QueryResult[]>;
-  transaction: (
-    queries: string[],
-    args: { [name: string]: any },
-  ) => Promise<QueryResult[]>;
+  query: (query: PGQuery) => Promise<QueryResult>;
+  queries: (queries: PGQuery[]) => Promise<QueryResult[]>;
+  transaction: (queries: PGQuery[]) => Promise<QueryResult[]>;
 }
 
 export interface PGProvider {
@@ -59,9 +62,20 @@ export interface PGProvider {
 
 /* Architecture Note #1: PostgreSQL service
 
-This service is a simple wrapper around the `pg` node module.
+This service is a simple wrapper around the `pg` node module
+ that adds native support for transsactions and a few tweaks
+ for a better plug and play experience.
 
-API Doc: https://node-postgres.com/features/pooling
+Its goal is to expose only a subset of its capabilities to
+ reduce the API surface to 3 use cases:
+- run a single query
+- run several queries in parallel
+- run several queries into a single transaction
+
+And that's it ;). The purpose is to know SQL, not an ORM, and
+ have an easily mockable API surface.
+
+PG module API Doc: https://node-postgres.com/features/pooling
 */
 
 export default options(
@@ -135,9 +149,10 @@ async function initPGService({
    *    { userId: 1 }
    * );
    */
-  async function query(query, args) {
-    return (await pg.queries([query], args))[0];
+  async function query(query: PGQuery) {
+    return (await pg.queries([query]))[0];
   }
+
   /**
    * Executes the given queries in parallel (using the connections pool)
    * @return {Array<String>}   Queries to execute
@@ -148,19 +163,17 @@ async function initPGService({
    *    'SELECT * FROM users WHERE user = $$userId',
    * ], { userId: 1 });
    */
-  async function queries(queries, args) {
+  async function queries(queries: PGQuery[]) {
     const client = await pool.connect();
     let results;
 
     try {
       results = await Promise.all(
         queries.map(async (query, index) => {
-          const { preparedQuery, preparedArgs } = prepareQuery(query, args);
-
           try {
-            return await client.query(preparedQuery, preparedArgs);
+            return await client.query(query);
           } catch (err) {
-            throw castPGQueryError(err, query, args, index);
+            throw castPGQueryError(err, query.text, query.values, index);
           }
         }),
       );
@@ -168,8 +181,8 @@ async function initPGService({
       const castedError = YError.cast(
         err,
         'E_PG_QUERIES',
-        queries,
-        args,
+        queries.map((query) => query.text),
+        queries.map((query) => query.values),
         err.code === 'E_PG_QUERY'
           ? err.params && typeof err.params[2] === 'object'
             ? err.params[2]
@@ -183,6 +196,7 @@ async function initPGService({
     }
     return results;
   }
+
   /**
    * Executes the given queries in a single transaction
    * @return {Array<String>}   Queries to execute
@@ -193,7 +207,7 @@ async function initPGService({
    *    'SELECT * FROM users WHERE user = $$userId',
    * ], { userId: 1 });
    */
-  async function transaction(queries, args) {
+  async function transaction(queries: PGQuery[]) {
     const client = await pool.connect();
     let results;
 
@@ -202,12 +216,10 @@ async function initPGService({
       try {
         results = await Promise.all(
           queries.map(async (query, index) => {
-            const { preparedQuery, preparedArgs } = prepareQuery(query, args);
-
             try {
-              return await client.query(preparedQuery, preparedArgs);
+              return await client.query(query);
             } catch (err) {
-              throw castPGQueryError(err, query, args, index);
+              throw castPGQueryError(err, query.text, query.values, index);
             }
           }),
         );
@@ -215,8 +227,8 @@ async function initPGService({
         const castedError = YError.cast(
           err,
           'E_PG_TRANSACTION',
-          queries,
-          args,
+          queries.map((query) => query.text),
+          queries.map((query) => query.values),
           err.code === 'E_PG_QUERY'
             ? err.params && typeof err.params[2] === 'object'
               ? err.params[2]
@@ -236,42 +248,7 @@ async function initPGService({
   }
 }
 
-/* Architecture Note #1.1: Prepared queries
-
-The `pg` module uses simple `$n` placeholder for queries values
- that are provided in an array.
-
- This function adds a level of abstraction that refers to fields
- in an object instead, transforming a query executions like
- `SELECT * FROM users WHERE id=$$userId` with { userId: 1 }
- into `SELECT * FROM users WHERE id=$1` with [1] under the
- hood.
-
-It also adds check to ensure the provided arguments exists.
-*/
-export function prepareQuery(query, args) {
-  let argsCount = 0;
-  const argsHash = {};
-  const preparedQuery = query.replace(/\$\$([a-zA-Z0-9_]+)/gm, (_, prop) => {
-    if ('undefined' === typeof args[prop]) {
-      throw new YError('E_PG_LACKING_ARG', query, args, prop);
-    }
-    if ('undefined' === typeof argsHash[prop]) {
-      argsHash[prop] = argsCount++;
-    }
-    return `$${argsHash[prop] + 1}`;
-  });
-
-  const preparedArgs = new Array(argsCount)
-    .fill('')
-    .map(
-      (_, index) =>
-        args[Object.keys(argsHash).find((key) => argsHash[key] === index)],
-    );
-  return { preparedQuery, preparedArgs };
-}
-
-/* Architecture Note #1.2: Errors casting
+/* Architecture Note #1.1: Errors casting
 
 This service also convert `pg` errors into `yerror` ones which taste
  better imo.
