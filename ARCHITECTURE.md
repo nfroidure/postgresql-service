@@ -9,28 +9,22 @@
 
 ## PostgreSQL service
 
-This service is a simple wrapper around the `pg` node module.
+This service is a simple wrapper around the `pg` node module
+ that adds native support for transsactions and a few tweaks
+ for a better plug and play experience.
 
-API Doc: https://node-postgres.com/features/pooling
+Its goal is to expose only a subset of its capabilities to
+ reduce the API surface to 3 use cases:
+- run a single query
+- run several queries in parallel
+- run several queries into a single transaction
 
-[See in context](./src/pg.ts#L60-L65)
+And that's it ;). The purpose is to know SQL, not an ORM, and
+ have an easily mockable API surface.
 
+PG module API Doc: https://node-postgres.com/features/pooling
 
-
-### Prepared queries
-
-The `pg` module uses simple `$n` placeholder for queries values
- that are provided in an array.
-
- This function adds a level of abstraction that refers to fields
- in an object instead, transforming a query executions like
- `SELECT * FROM users WHERE id=$$userId` with { userId: 1 }
- into `SELECT * FROM users WHERE id=$1` with [1] under the
- hood.
-
-It also adds check to ensure the provided arguments exists.
-
-[See in context](./src/pg.ts#L239-L251)
+[See in context](./src/pg.ts#L63-L79)
 
 
 
@@ -39,20 +33,7 @@ It also adds check to ensure the provided arguments exists.
 This service also convert `pg` errors into `yerror` ones which taste
  better imo.
 
-[See in context](./src/pg.ts#L274-L278)
-
-
-
-#### Mocking pg
-
-The pg mock uses the [`jest`](https://jestjs.io) under the hood.
- You will have to use Jest to use it.
-
-Its purpose it to ensure queries are well formed while mocking
- in the tests and that the values placeholder really have a value
- associated to it in the values hash.
-
-[See in context](./src/pg.mock.ts#L7-L15)
+[See in context](./src/pg.ts#L251-L255)
 
 
 
@@ -65,5 +46,5 @@ See https://github.com/vitaly-t/pg-promise/issues/389
 // 1115 - timestamp without time zone[]
 // 1182 - date[]
 
-[See in context](./src/pg.ts#L10-L18)
+[See in context](./src/pg.ts#L13-L21)
 

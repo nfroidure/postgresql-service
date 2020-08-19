@@ -19,13 +19,17 @@
 
 [//]: # (::contents:start)
 
-This simple service covers my own usage of the `pg` module. I only
- use transactions and queries and I use dependency injection with
- [Knifecycle](https://github.com/nfroidure/knifecycle).
+This simple service covers my own usage of the `pg` module. I only use
+transactions and queries and I use dependency injection with
+[Knifecycle](https://github.com/nfroidure/knifecycle).
 
-It also sets up a few tweaks I have to do for each projects like
- avoiding to mess up with dates.
+It also sets up a few tweaks I have to do for each projects like avoiding to
+mess up with dates.
 
+## Tagged templates
+
+You may like to use [pgsqwell](https://github.com/nfroidure/pgsqwell) with this
+module.
 
 [//]: # (::contents:end)
 
