@@ -1,3 +1,12 @@
+# [2.0.0](https://github.com/nfroidure/postgresql-service/compare/v1.2.4...v2.0.0) (2020-08-19)
+
+
+### Bug Fixes
+
+* **doc:** check metapak changes after docs generation ([e6ed5a1](https://github.com/nfroidure/postgresql-service/commit/e6ed5a133ea67accf4da007987f7d0459fa00193))
+
+
+
 ## [1.2.4](https://github.com/nfroidure/postgresql-service/compare/v1.2.3...v1.2.4) (2020-07-23)
 
 
