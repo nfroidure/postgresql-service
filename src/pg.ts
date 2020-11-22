@@ -1,4 +1,4 @@
-import { options, provider, autoInject } from 'knifecycle';
+import { singleton, provider, autoInject } from 'knifecycle';
 import YError from 'yerror';
 import pgConnectionString from 'pg-connection-string';
 import pg from 'pg';
@@ -78,11 +78,7 @@ And that's it ;). The purpose is to know SQL, not an ORM, and
 PG module API Doc: https://node-postgres.com/features/pooling
 */
 
-export default options(
-  { singleton: true },
-  provider(autoInject(initPGService), 'pg'),
-  false,
-);
+export default singleton(provider(autoInject(initPGService), 'pg'));
 
 /**
  * Instantiate the pg service
@@ -120,7 +116,7 @@ async function initPGService({
     queries,
     transaction,
   };
-  const errorPromise: Promise<void> = new Promise((resolve, reject) => {
+  const errorPromise = new Promise<void>((resolve, reject) => {
     pool.once('error', (err) => {
       const castedError = YError.wrap(err);
       log('error', 'Got a PG error:', castedError.stack);
@@ -276,4 +272,6 @@ function castPGQueryError(
   });
 }
 
-function noop() {}
+function noop(...args: unknown[]): void {
+  args;
+}

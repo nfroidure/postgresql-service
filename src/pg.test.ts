@@ -1,6 +1,7 @@
 import assert from 'assert';
 import { Knifecycle, constant } from 'knifecycle';
-import initPGService, { PGService } from './pg';
+import initPGService from './pg';
+import type { PGService } from './pg';
 
 describe('initPGService', () => {
   const log = jest.fn();

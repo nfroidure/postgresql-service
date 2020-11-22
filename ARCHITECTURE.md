@@ -33,7 +33,7 @@ PG module API Doc: https://node-postgres.com/features/pooling
 This service also convert `pg` errors into `yerror` ones which taste
  better imo.
 
-[See in context](./src/pg.ts#L251-L255)
+[See in context](./src/pg.ts#L247-L251)
 
 
 
