@@ -1,3 +1,12 @@
+# [4.1.0](https://github.com/nfroidure/postgresql-service/compare/v4.0.0...v4.1.0) (2020-12-05)
+
+
+### Features
+
+* **env:** allow to customize env var name ([8590128](https://github.com/nfroidure/postgresql-service/commit/8590128d0ae60e600c910818848f2f9a5fcf9a2a))
+
+
+
 # [4.0.0](https://github.com/nfroidure/postgresql-service/compare/v3.0.1...v4.0.0) (2020-11-22)
 
 
