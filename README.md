@@ -46,6 +46,7 @@ Instantiate the pg service
 | --- | --- | --- |
 | services | <code>Object</code> | The services to inject |
 | [services.log] | <code>function</code> | A logging function |
+| [services.PG_URL_ENV_NAME] | <code>Object</code> | The environment variable name in which to pick-up the  PG url |
 | [services.ENV] | <code>Object</code> | An environment object |
 | services.PG | <code>Object</code> | A `pg` compatible configuration object |
 

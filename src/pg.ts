@@ -27,14 +27,20 @@ types.setTypeParser(1082, (str) =>
   str === null ? null : new Date(str + 'T00:00:00Z'),
 );
 
+const DEFAULT_ENV: PG_ENV = {};
+
+export const DEFAULT_PG_URL_ENV_NAME = 'PG_URL';
+
 type PG_CONFIG = PoolConfig;
 type SQLValue = any;
 
 export type PG_ENV = {
   PG_URL?: string;
+  [name: string]: string;
 };
 
 export type PGServiceConfig = {
+  PG_URL_ENV_NAME?: string;
   ENV?: PG_ENV;
   PG: PG_CONFIG;
 };
@@ -84,11 +90,19 @@ export default singleton(provider(autoInject(initPGService), 'pg'));
  * Instantiate the pg service
  * @name initPGService
  * @function
- * @param  {Object}   services           The services to inject
- * @param  {Function} [services.log]     A logging function
- * @param  {Object}   [services.ENV]     An environment object
- * @param  {Object}   services.PG      A `pg` compatible configuration object
- * @return {Promise<Object>}             A promise of the pg service
+ * @param  {Object}   services
+ * The services to inject
+ * @param  {Function} [services.log]
+ * A logging function
+ * @param  {Object}   [services.PG_URL_ENV_NAME]
+ * The environment variable name in which to pick-up the
+ *  PG url
+ * @param  {Object}   [services.ENV]
+ * An environment object
+ * @param  {Object}   services.PG
+ * A `pg` compatible configuration object
+ * @return {Promise<Object>}
+ * A promise of the pg service
  * @example
  * import initPGService from 'postgresql-service';
  *
@@ -102,13 +116,14 @@ export default singleton(provider(autoInject(initPGService), 'pg'));
  * await dispose();
  */
 async function initPGService({
-  ENV = {},
+  PG_URL_ENV_NAME = DEFAULT_PG_URL_ENV_NAME,
+  ENV = DEFAULT_ENV,
   PG,
   log = noop,
 }: PGServiceDependencies): Promise<PGProvider> {
   const config = {
     ...PG,
-    ...(ENV.PG_URL ? parseConnectionURL(ENV.PG_URL) : {}),
+    ...(ENV[PG_URL_ENV_NAME] ? parseConnectionURL(ENV[PG_URL_ENV_NAME]) : {}),
   };
   const pool = new Pool(config as PoolConfig);
   const pg = {
