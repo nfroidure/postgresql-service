@@ -1,3 +1,7 @@
+## [4.1.1](https://github.com/nfroidure/postgresql-service/compare/v4.1.0...v4.1.1) (2021-04-10)
+
+
+
 # [4.1.0](https://github.com/nfroidure/postgresql-service/compare/v4.0.0...v4.1.0) (2020-12-05)
 
 
