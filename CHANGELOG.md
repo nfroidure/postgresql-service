@@ -1,3 +1,12 @@
+# [5.0.0](https://github.com/nfroidure/postgresql-service/compare/v4.1.1...v5.0.0) (2021-11-01)
+
+
+### Features
+
+* **types:** better typings ([a573cc5](https://github.com/nfroidure/postgresql-service/commit/a573cc50eb89821c77fef7d244f9a263e1bb5451))
+
+
+
 ## [4.1.1](https://github.com/nfroidure/postgresql-service/compare/v4.1.0...v4.1.1) (2021-04-10)
 
 
