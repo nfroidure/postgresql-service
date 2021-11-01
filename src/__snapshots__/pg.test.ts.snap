@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`initPGService pg should work 1`] = `Array []`;
+exports[`initPGService pg should work with envname 1`] = `Array []`;
 
-exports[`initPGService should work 1`] = `
+exports[`initPGService pg should work without envname 1`] = `
 Array [
   Array [
     "debug",

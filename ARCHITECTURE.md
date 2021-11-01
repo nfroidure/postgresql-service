@@ -5,9 +5,14 @@
 [//]: # ( )
 # Architecture Notes
 
+## Summary
+
+1. [PostgreSQL service](#1-postgresql-service)
+   1. [Errors casting](#11-errors-casting)
+   2. [Timezones](#12-timezones)
 
 
-## PostgreSQL service
+## 1. PostgreSQL service
 
 This service is a simple wrapper around the `pg` node module
  that adds native support for transsactions and a few tweaks
@@ -24,20 +29,20 @@ And that's it ;). The purpose is to know SQL, not an ORM, and
 
 PG module API Doc: https://node-postgres.com/features/pooling
 
-[See in context](./src/pg.ts#L69-L85)
+[See in context](./src/pg.ts#L76-L92)
 
 
 
-### Errors casting
+### 1.1. Errors casting
 
 This service also convert `pg` errors into `yerror` ones which taste
  better imo.
 
-[See in context](./src/pg.ts#L262-L266)
+[See in context](./src/pg.ts#L276-L280)
 
 
 
-### Timezones
+### 1.2. Timezones
 
 Ensure not messing with time zones with practical defaults.
 See https://github.com/vitaly-t/pg-promise/issues/389
@@ -46,5 +51,5 @@ See https://github.com/vitaly-t/pg-promise/issues/389
 // 1115 - timestamp without time zone[]
 // 1182 - date[]
 
-[See in context](./src/pg.ts#L13-L21)
+[See in context](./src/pg.ts#L19-L27)
 

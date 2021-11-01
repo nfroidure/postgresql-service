@@ -5,28 +5,29 @@ import type { PGService } from './pg';
 
 describe('initPGService', () => {
   const log = jest.fn();
-  const ENV = {};
   const PG = {};
 
   beforeEach(() => {
     log.mockClear();
   });
 
-  test('should work', async () => {
-    const pg = await initPGService({
-      ENV,
-      PG,
-      log,
+  describe('pg', () => {
+    test('should work without envname', async () => {
+      const pg = await initPGService({
+        PG,
+        log,
+      });
+
+      assert(pg);
+      expect(log.mock.calls).toMatchSnapshot();
     });
 
-    assert(pg);
-    expect(log.mock.calls).toMatchSnapshot();
-  });
-
-  describe('pg', () => {
-    test('should work', async () => {
+    test('should work with envname', async () => {
       const pg = await initPGService({
-        ENV,
+        PG_URL_ENV_NAME: 'YOLO',
+        ENV: {
+          YOLO: 'myurl',
+        },
         PG,
         log,
       });

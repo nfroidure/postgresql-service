@@ -1,4 +1,10 @@
-import { singleton, provider, autoInject } from 'knifecycle';
+import {
+  provider,
+  autoInject,
+  ServiceInitializer,
+  Dependencies,
+  Service,
+} from 'knifecycle';
 import YError from 'yerror';
 import pgConnectionString from 'pg-connection-string';
 import pg from 'pg';
@@ -27,25 +33,26 @@ types.setTypeParser(1082, (str) =>
   str === null ? null : new Date(str + 'T00:00:00Z'),
 );
 
-const DEFAULT_ENV: PG_ENV = {};
-
 export const DEFAULT_PG_URL_ENV_NAME = 'PG_URL';
 
 type PG_CONFIG = PoolConfig;
 type SQLValue = any;
 
-export type PG_ENV = {
-  PG_URL?: string;
-  [name: string]: string;
-};
-
-export type PGServiceConfig = {
-  PG_URL_ENV_NAME?: string;
-  ENV?: PG_ENV;
+export type PGServiceConfig<
+  T extends string extends T ? never : string = typeof DEFAULT_PG_URL_ENV_NAME,
+> = {
+  PG_URL_ENV_NAME?: T;
   PG: PG_CONFIG;
 };
 
-export type PGServiceDependencies = PGServiceConfig & {
+export type PG_ENV<
+  T extends string extends T ? never : string = typeof DEFAULT_PG_URL_ENV_NAME,
+> = Record<T, string>;
+
+export type PGServiceDependencies<
+  T extends string extends T ? never : string = typeof DEFAULT_PG_URL_ENV_NAME,
+> = PGServiceConfig<T> & {
+  ENV?: PG_ENV<T>;
   log?: LogService;
 };
 
@@ -84,7 +91,11 @@ And that's it ;). The purpose is to know SQL, not an ORM, and
 PG module API Doc: https://node-postgres.com/features/pooling
 */
 
-export default singleton(provider(autoInject(initPGService), 'pg'));
+export default provider(
+  initPGService as unknown as ServiceInitializer<Dependencies, Service>,
+  'pg',
+  ['?PG_URL_ENV_NAME', '?ENV', 'PG', '?log'],
+) as unknown as typeof initPGService;
 
 /**
  * Instantiate the pg service
@@ -115,15 +126,18 @@ export default singleton(provider(autoInject(initPGService), 'pg'));
  *
  * await dispose();
  */
-async function initPGService({
-  PG_URL_ENV_NAME = DEFAULT_PG_URL_ENV_NAME,
-  ENV = DEFAULT_ENV,
+async function initPGService<
+  T extends string extends T ? never : string = typeof DEFAULT_PG_URL_ENV_NAME,
+>({
+  PG_URL_ENV_NAME,
+  ENV,
   PG,
   log = noop,
-}: PGServiceDependencies): Promise<PGProvider> {
+}: PGServiceDependencies<T>): Promise<PGProvider> {
+  const pgURLName = (PG_URL_ENV_NAME || DEFAULT_PG_URL_ENV_NAME) as T;
   const config = {
     ...PG,
-    ...(ENV[PG_URL_ENV_NAME] ? parseConnectionURL(ENV[PG_URL_ENV_NAME]) : {}),
+    ...(ENV?.[pgURLName] ? parseConnectionURL(ENV[pgURLName]) : {}),
   };
   const pool = new Pool(config as PoolConfig);
   const pg = {
@@ -134,7 +148,7 @@ async function initPGService({
   const errorPromise = new Promise<void>((resolve, reject) => {
     pool.once('error', (err) => {
       const castedError = YError.wrap(err);
-      log('error', 'Got a PG error:', castedError.stack);
+      log('error', 'Got a PG error:', castedError.stack as string);
       reject(castedError);
     });
   });

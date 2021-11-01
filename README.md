@@ -10,11 +10,6 @@
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/nfroidure/postgresql-service/blob/master/LICENSE)
 [![Build status](https://travis-ci.com/git+ssh://git@github.com/nfroidure/postgresql-service.git.svg?branch=master)](https://travis-ci.com/github/git+ssh://git@github.com/nfroidure/postgresql-service.git)
 [![Coverage Status](https://coveralls.io/repos/github/git+ssh://git@github.com/nfroidure/postgresql-service.git/badge.svg?branch=master)](https://coveralls.io/github/git+ssh://git@github.com/nfroidure/postgresql-service.git?branch=master)
-[![NPM version](https://badge.fury.io/js/postgresql-service.svg)](https://npmjs.org/package/postgresql-service)
-[![Dependency Status](https://david-dm.org/nfroidure/postgresql-service.svg)](https://david-dm.org/nfroidure/postgresql-service)
-[![devDependency Status](https://david-dm.org/nfroidure/postgresql-service/dev-status.svg)](https://david-dm.org/nfroidure/postgresql-service#info=devDependencies)
-[![Package Quality](https://npm.packagequality.com/shield/postgresql-service.svg)](https://packagequality.com/#?package=postgresql-service)
-[![Code Climate](https://codeclimate.com/github/git+ssh://git@github.com/nfroidure/postgresql-service.git.svg)](https://codeclimate.com/github/git+ssh://git@github.com/nfroidure/postgresql-service.git)
 
 
 [//]: # (::contents:start)
