@@ -1,3 +1,12 @@
+## [5.0.1](https://github.com/nfroidure/postgresql-service/compare/v5.0.0...v5.0.1) (2021-11-02)
+
+
+### Bug Fixes
+
+* **types:** fix types issues ([bdcbdca](https://github.com/nfroidure/postgresql-service/commit/bdcbdca642deb4e6375e677ea0882492095369ff))
+
+
+
 # [5.0.0](https://github.com/nfroidure/postgresql-service/compare/v4.1.1...v5.0.0) (2021-11-01)
 
 
