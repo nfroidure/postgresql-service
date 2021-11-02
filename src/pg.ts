@@ -1,13 +1,8 @@
-import {
-  provider,
-  autoInject,
-  ServiceInitializer,
-  Dependencies,
-  Service,
-} from 'knifecycle';
+import { provider } from 'knifecycle';
 import YError from 'yerror';
 import pgConnectionString from 'pg-connection-string';
 import pg from 'pg';
+import type { ProviderInitializer, Dependencies, Service } from 'knifecycle';
 import type { PoolConfig, QueryResult } from 'pg';
 import type { LogService } from 'common-services';
 
@@ -92,7 +87,7 @@ PG module API Doc: https://node-postgres.com/features/pooling
 */
 
 export default provider(
-  initPGService as unknown as ServiceInitializer<Dependencies, Service>,
+  initPGService as unknown as ProviderInitializer<Dependencies, Service>,
   'pg',
   ['?PG_URL_ENV_NAME', '?ENV', 'PG', '?log'],
 ) as unknown as typeof initPGService;

@@ -194,7 +194,6 @@
   "babel": {
     "plugins": [
       "@babel/proposal-class-properties",
-      "babel-plugin-knifecycle",
       "@babel/plugin-proposal-object-rest-spread"
     ],
     "presets": [
