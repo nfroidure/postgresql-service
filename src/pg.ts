@@ -3,7 +3,7 @@ import YError from 'yerror';
 import pgConnectionString from 'pg-connection-string';
 import pg from 'pg';
 import type { ProviderInitializer, Dependencies, Service } from 'knifecycle';
-import type { PoolConfig, QueryResult } from 'pg';
+import type { PoolConfig, QueryResult, DatabaseError } from 'pg';
 import type { LogService } from 'common-services';
 
 // Required to work as a MJS module. Will be turnable
@@ -193,19 +193,25 @@ async function initPGService<
           try {
             return await client.query(query);
           } catch (err) {
-            throw castPGQueryError(err, query.text, query.values, index);
+            throw castPGQueryError(
+              err as DatabaseError,
+              query.text,
+              query.values,
+              index,
+            );
           }
         }),
       );
     } catch (err) {
       const castedError = YError.cast(
-        err,
+        err as Error,
         'E_PG_QUERIES',
         queries.map((query) => query.text),
         queries.map((query) => query.values),
-        err.code === 'E_PG_QUERY'
-          ? err.params && typeof err.params[2] === 'object'
-            ? err.params[2]
+        (err as YError).code === 'E_PG_QUERY'
+          ? (err as YError).params &&
+            typeof (err as YError).params[2] === 'object'
+            ? (err as YError).params[2]
             : {}
           : {},
       );
@@ -239,19 +245,25 @@ async function initPGService<
             try {
               return await client.query(query);
             } catch (err) {
-              throw castPGQueryError(err, query.text, query.values, index);
+              throw castPGQueryError(
+                err as DatabaseError,
+                query.text,
+                query.values,
+                index,
+              );
             }
           }),
         );
       } catch (err) {
         const castedError = YError.cast(
-          err,
+          err as Error,
           'E_PG_TRANSACTION',
           queries.map((query) => query.text),
           queries.map((query) => query.values),
-          err.code === 'E_PG_QUERY'
-            ? err.params && typeof err.params[2] === 'object'
-              ? err.params[2]
+          (err as YError).code === 'E_PG_QUERY'
+            ? (err as YError).params &&
+              typeof (err as YError).params[2] === 'object'
+              ? (err as YError).params[2]
               : {}
             : {},
         );
@@ -274,25 +286,25 @@ This service also convert `pg` errors into `yerror` ones which taste
  better imo.
 */
 function castPGQueryError(
-  err: Error,
+  err: DatabaseError,
   query: string,
-  args: any[],
+  args: unknown[],
   index: number,
 ) {
   return YError.wrap(err, 'E_PG_QUERY', query, args, {
     index,
-    code: (err as any).code || undefined,
-    name: (err as any).name || undefined,
-    severity: (err as any).severity || undefined,
-    detail: (err as any).detail || undefined,
-    schema: (err as any).schema || undefined,
-    table: (err as any).table || undefined,
-    column: (err as any).column || undefined,
-    dataType: (err as any).dataType || undefined,
-    constraint: (err as any).constraint || undefined,
-    file: (err as any).file || undefined,
-    line: (err as any).line || undefined,
-    routine: (err as any).routine || undefined,
+    code: err.code || undefined,
+    name: err.name || undefined,
+    severity: err.severity || undefined,
+    detail: err.detail || undefined,
+    schema: err.schema || undefined,
+    table: err.table || undefined,
+    column: err.column || undefined,
+    dataType: err.dataType || undefined,
+    constraint: err.constraint || undefined,
+    file: err.file || undefined,
+    line: err.line || undefined,
+    routine: err.routine || undefined,
   });
 }
 
