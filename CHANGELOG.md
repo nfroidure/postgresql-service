@@ -1,3 +1,7 @@
+# [6.0.0](https://github.com/nfroidure/postgresql-service/compare/v5.0.2...v6.0.0) (2022-06-12)
+
+
+
 ## [5.0.2](https://github.com/nfroidure/postgresql-service/compare/v5.0.1...v5.0.2) (2022-05-26)
 
 

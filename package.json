@@ -1,6 +1,6 @@
 {
   "name": "postgresql-service",
-  "version": "5.0.2",
+  "version": "6.0.0",
   "description": "A simple wrapper around `node-pg`",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
