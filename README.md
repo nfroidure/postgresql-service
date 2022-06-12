@@ -8,8 +8,7 @@
 > A simple wrapper around `node-pg`
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/nfroidure/postgresql-service/blob/master/LICENSE)
-[![Build status](https://travis-ci.com/git+ssh://git@github.com/nfroidure/postgresql-service.git.svg?branch=master)](https://travis-ci.com/github/git+ssh://git@github.com/nfroidure/postgresql-service.git)
-[![Coverage Status](https://coveralls.io/repos/github/git+ssh://git@github.com/nfroidure/postgresql-service.git/badge.svg?branch=master)](https://coveralls.io/github/git+ssh://git@github.com/nfroidure/postgresql-service.git?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/nfroidure/postgresql-service/badge.svg?branch=master)](https://coveralls.io/github/nfroidure/postgresql-service?branch=master)
 
 
 [//]: # (::contents:start)

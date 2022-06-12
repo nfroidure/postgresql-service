@@ -1,10 +1,12 @@
+import { jest } from '@jest/globals';
 import assert from 'assert';
 import { Knifecycle, constant } from 'knifecycle';
-import initPGService from './pg';
-import type { PGService } from './pg';
+import initPGService from './pg.js';
+import type { PGService } from './pg.js';
+import type { LogService } from 'common-services';
 
 describe('initPGService', () => {
-  const log = jest.fn();
+  const log = jest.fn<LogService>();
   const PG = {};
 
   beforeEach(() => {

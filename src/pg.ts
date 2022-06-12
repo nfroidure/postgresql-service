@@ -1,5 +1,5 @@
 import { provider } from 'knifecycle';
-import YError from 'yerror';
+import { YError } from 'yerror';
 import pgConnectionString from 'pg-connection-string';
 import pg from 'pg';
 import type { ProviderInitializer, Dependencies, Service } from 'knifecycle';
