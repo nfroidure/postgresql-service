@@ -1,3 +1,12 @@
+## [6.0.2](https://github.com/nfroidure/postgresql-service/compare/v6.0.1...v6.0.2) (2022-08-12)
+
+
+### Bug Fixes
+
+* **types:** fix types path once for all ([de8c60a](https://github.com/nfroidure/postgresql-service/commit/de8c60a84fd7013e8527a4b9398344bcf4ffc085))
+
+
+
 ## [6.0.1](https://github.com/nfroidure/postgresql-service/compare/v6.0.0...v6.0.1) (2022-08-12)
 
 
