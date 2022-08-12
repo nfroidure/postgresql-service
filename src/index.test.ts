@@ -1,8 +1,8 @@
 import { jest } from '@jest/globals';
 import assert from 'assert';
 import { Knifecycle, constant } from 'knifecycle';
-import initPGService from './pg.js';
-import type { PGService } from './pg.js';
+import initPGService from './index.js';
+import type { PGService } from './index.js';
 import type { LogService } from 'common-services';
 
 describe('initPGService', () => {

@@ -29,7 +29,7 @@ And that's it ;). The purpose is to know SQL, not an ORM, and
 
 PG module API Doc: https://node-postgres.com/features/pooling
 
-[See in context](./src/pg.ts#L71-L87)
+[See in context](./src/index.ts#L71-L87)
 
 
 
@@ -38,7 +38,7 @@ PG module API Doc: https://node-postgres.com/features/pooling
 This service also convert `pg` errors into `yerror` ones which taste
  better imo.
 
-[See in context](./src/pg.ts#L283-L287)
+[See in context](./src/index.ts#L283-L287)
 
 
 
@@ -51,5 +51,5 @@ See https://github.com/vitaly-t/pg-promise/issues/389
 // 1115 - timestamp without time zone[]
 // 1182 - date[]
 
-[See in context](./src/pg.ts#L14-L22)
+[See in context](./src/index.ts#L14-L22)
 

@@ -2,6 +2,7 @@
   "name": "postgresql-service",
   "version": "6.0.1",
   "description": "A simple wrapper around `node-pg`",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -176,54 +177,6 @@
     "trailingComma": "all",
     "proseWrap": "always"
   },
-  "babel": {
-    "plugins": [
-      "@babel/proposal-class-properties",
-      "@babel/plugin-proposal-object-rest-spread"
-    ],
-    "presets": [
-      "@babel/typescript",
-      [
-        "@babel/env",
-        {
-          "targets": {
-            "node": "12.19.0"
-          }
-        }
-      ]
-    ],
-    "env": {
-      "cjs": {
-        "presets": [
-          [
-            "@babel/env",
-            {
-              "targets": {
-                "node": "10"
-              },
-              "modules": "commonjs"
-            }
-          ]
-        ],
-        "comments": true
-      },
-      "mjs": {
-        "presets": [
-          [
-            "@babel/env",
-            {
-              "targets": {
-                "node": "12"
-              },
-              "modules": false
-            }
-          ]
-        ],
-        "comments": false
-      }
-    },
-    "sourceMaps": true
-  },
   "jest": {
     "coverageReporters": [
       "lcov"
@@ -250,6 +203,5 @@
     "extensionsToTreatAsEsm": [
       ".ts"
     ]
-  },
-  "type": "module"
+  }
 }
