@@ -1,4 +1,4 @@
-import { jest } from '@jest/globals';
+import { describe, beforeEach, test, jest, expect } from '@jest/globals';
 import assert from 'assert';
 import { Knifecycle, constant } from 'knifecycle';
 import initPGService from './index.js';
