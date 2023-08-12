@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { provider } from 'knifecycle';
 import { YError } from 'yerror';
 import pgConnectionString from 'pg-connection-string';
@@ -235,25 +236,23 @@ async function initPGService<
    */
   async function transaction(queries: PGQuery[]) {
     const client = await pool.connect();
-    let results;
+    const results: any[] = [];
 
     try {
       await client.query('BEGIN');
       try {
-        results = await Promise.all(
-          queries.map(async (query, index) => {
-            try {
-              return await client.query(query);
-            } catch (err) {
-              throw castPGQueryError(
-                err as DatabaseError,
-                query.text,
-                query.values,
-                index,
-              );
-            }
-          }),
-        );
+        for (let index = 0; index < queries.length; index++) {
+          try {
+            results[index] = await client.query(queries[index]);
+          } catch (err) {
+            throw castPGQueryError(
+              err as DatabaseError,
+              queries[index].text,
+              queries[index].values,
+              index,
+            );
+          }
+        }
       } catch (err) {
         const castedError = YError.cast(
           err as Error,

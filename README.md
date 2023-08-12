@@ -7,8 +7,8 @@
 # postgresql-service
 > A simple wrapper around `node-pg`
 
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/nfroidure/postgresql-service/blob/master/LICENSE)
-[![Coverage Status](https://coveralls.io/repos/github/nfroidure/postgresql-service/badge.svg?branch=master)](https://coveralls.io/github/nfroidure/postgresql-service?branch=master)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/nfroidure/postgresql-service/blob/main/LICENSE)
+[![Coverage Status](https://coveralls.io/repos/github/nfroidure/postgresql-service/badge.svg?branch=main)](https://coveralls.io/github/nfroidure/postgresql-service?branch=main)
 
 
 [//]: # (::contents:start)
@@ -110,4 +110,4 @@ const [, { rows, fields }] = await pg.transaction([
 - [Nicolas Froidure](http://insertafter.com/en/index.html)
 
 # License
-[MIT](https://github.com/nfroidure/postgresql-service/blob/master/LICENSE)
+[MIT](https://github.com/nfroidure/postgresql-service/blob/main/LICENSE)
