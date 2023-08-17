@@ -1,3 +1,12 @@
+## [8.0.1](https://github.com/nfroidure/postgresql-service/compare/v8.0.0...v8.0.1) (2023-08-17)
+
+
+### Bug Fixes
+
+* **env:** set en var as optional ([7ff42b2](https://github.com/nfroidure/postgresql-service/commit/7ff42b2166973aff8df90ebabedf834d7d948708))
+
+
+
 # [8.0.0](https://github.com/nfroidure/postgresql-service/compare/v7.0.0...v8.0.0) (2023-08-17)
 
 
