@@ -41,14 +41,14 @@ export type PGServiceConfig<
   PG: PG_CONFIG;
 };
 
-export type PG_ENV<
+export type PGEnvVars<
   T extends string extends T ? never : string = typeof DEFAULT_PG_URL_ENV_NAME,
-> = Record<T, string>;
+> = Partial<Record<T, string>>;
 
 export type PGServiceDependencies<
   T extends string extends T ? never : string = typeof DEFAULT_PG_URL_ENV_NAME,
 > = PGServiceConfig<T> & {
-  ENV?: PG_ENV<T>;
+  ENV?: PGEnvVars<T>;
   log?: LogService;
 };
 
@@ -131,9 +131,20 @@ async function initPGService<
   log = noop,
 }: PGServiceDependencies<T>): Promise<PGProvider> {
   const pgURLName = (PG_URL_ENV_NAME || DEFAULT_PG_URL_ENV_NAME) as T;
+  const pgURL = ENV?.[pgURLName];
+
+  if ('password' in PG) {
+    log('warning', `⚠️ - Setting the password in the PG config is unsafe.`);
+  }
+
+  if (!('password' in PG) && !pgURL) {
+    log('error', `❌ - No "${pgURLName}" env var set.`);
+    throw new YError('E_BAD_PG_ENV', pgURLName);
+  }
+
   const config = {
     ...PG,
-    ...(ENV?.[pgURLName] ? parseConnectionURL(ENV[pgURLName]) : {}),
+    ...(pgURL ? parseConnectionURL(pgURL) : {}),
   };
   const pool = new Pool(config as PoolConfig);
   const pg = {

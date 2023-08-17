@@ -16,7 +16,7 @@ describe('initPGService', () => {
   describe('pg', () => {
     test('should work without envname', async () => {
       const pg = await initPGService({
-        PG,
+        PG: { ...PG, password: 'a_pwd' },
         log,
       });
 
@@ -45,7 +45,8 @@ describe('initPGService', () => {
     const $ = new Knifecycle()
       .register(initPGService)
       .register(constant('log', log))
-      .register(constant('PG', {}));
+      .register(constant('PG', {}))
+      .register(constant('ENV', { PG_URL: 'a_pg_url' }));
     const { pg } = await $.run<{ pg: PGService }>(['pg']);
 
     assert(pg);

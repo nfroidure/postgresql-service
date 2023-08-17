@@ -5,6 +5,10 @@ exports[`initPGService pg should work with envname 1`] = `[]`;
 exports[`initPGService pg should work without envname 1`] = `
 [
   [
+    "warning",
+    "⚠️ - Setting the password in the PG config is unsafe.",
+  ],
+  [
     "debug",
     "🐘 - Initializing PG service...",
   ],
