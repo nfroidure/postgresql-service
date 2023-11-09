@@ -159,15 +159,15 @@ async function initPGService<
       reject(castedError);
     });
   });
-  log('debug', '🐘 - Initializing PG service...');
+  log('warning', '🐘 - Initializing PG service...');
 
   return {
     service: pg,
     errorPromise,
     dispose: async () => {
-      log('debug', '🐘 - Draining PG connections... 🐘');
+      log('warning', '🐘 - Draining PG connections... 🐘');
       await pool.end();
-      log('debug', '🐘 - PG connections drained ! 🐘');
+      log('warning', '🐘 - PG connections drained ! 🐘');
     },
   };
 
