@@ -1,3 +1,7 @@
+## [8.0.4](https://github.com/nfroidure/postgresql-service/compare/v8.0.3...v8.0.4) (2024-05-28)
+
+
+
 ## [8.0.3](https://github.com/nfroidure/postgresql-service/compare/v8.0.2...v8.0.3) (2023-11-09)
 
 
