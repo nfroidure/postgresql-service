@@ -34,19 +34,17 @@ export const DEFAULT_PG_URL_ENV_NAME = 'PG_URL';
 type PG_CONFIG = PoolConfig;
 type SQLValue = any;
 
-export type PGServiceConfig<
-  T extends string extends T ? never : string = typeof DEFAULT_PG_URL_ENV_NAME,
-> = {
-  PG_URL_ENV_NAME?: T;
-  PG: PG_CONFIG;
-};
+export type PGServiceConfig<T extends string = typeof DEFAULT_PG_URL_ENV_NAME> =
+  {
+    PG_URL_ENV_NAME?: T;
+    PG: PG_CONFIG;
+  };
 
-export type PGEnvVars<
-  T extends string extends T ? never : string = typeof DEFAULT_PG_URL_ENV_NAME,
-> = Partial<Record<T, string>>;
+export type PGEnvVars<T extends string = typeof DEFAULT_PG_URL_ENV_NAME> =
+  Partial<Record<T, string>>;
 
 export type PGServiceDependencies<
-  T extends string extends T ? never : string = typeof DEFAULT_PG_URL_ENV_NAME,
+  T extends string = typeof DEFAULT_PG_URL_ENV_NAME,
 > = PGServiceConfig<T> & {
   ENV?: PGEnvVars<T>;
   log?: LogService;
@@ -123,7 +121,7 @@ export default provider(
  * await dispose();
  */
 async function initPGService<
-  T extends string extends T ? never : string = typeof DEFAULT_PG_URL_ENV_NAME,
+  T extends string = typeof DEFAULT_PG_URL_ENV_NAME,
 >({
   PG_URL_ENV_NAME,
   ENV,
