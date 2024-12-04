@@ -1,11 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { provider } from 'knifecycle';
+import {
+  provider,
+  location,
+  type ProviderInitializer,
+  type Dependencies,
+  type Service,
+} from 'knifecycle';
 import { YError } from 'yerror';
 import pgConnectionString from 'pg-connection-string';
 import pg from 'pg';
-import type { ProviderInitializer, Dependencies, Service } from 'knifecycle';
-import type { PoolConfig, QueryResult, DatabaseError } from 'pg';
-import type { LogService } from 'common-services';
+import { type PoolConfig, type QueryResult, type DatabaseError } from 'pg';
+import { noop, type LogService } from 'common-services';
 
 // Required to work as a MJS module. Will be turnable
 // into real imports when those module will support MJS
@@ -85,10 +90,13 @@ And that's it ;). The purpose is to know SQL, not an ORM, and
 PG module API Doc: https://node-postgres.com/features/pooling
 */
 
-export default provider(
-  initPGService as unknown as ProviderInitializer<Dependencies, Service>,
-  'pg',
-  ['?PG_URL_ENV_NAME', '?ENV', 'PG', '?log'],
+export default location(
+  provider(
+    initPGService as unknown as ProviderInitializer<Dependencies, Service>,
+    'pg',
+    ['?PG_URL_ENV_NAME', '?ENV', 'PG', '?log'],
+  ),
+  import.meta.url,
 ) as unknown as typeof initPGService;
 
 /**
@@ -314,8 +322,4 @@ function castPGQueryError(
     line: err.line || undefined,
     routine: err.routine || undefined,
   });
-}
-
-function noop(...args: unknown[]): void {
-  args;
 }
