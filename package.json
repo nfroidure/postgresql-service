@@ -27,7 +27,7 @@
     ]
   },
   "name": "postgresql-service",
-  "version": "9.0.1",
+  "version": "10.0.0",
   "description": "A simple wrapper around `node-pg`",
   "type": "module",
   "main": "dist/index.js",
