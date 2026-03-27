@@ -1,9 +1,7 @@
 import { describe, beforeEach, test, jest, expect } from '@jest/globals';
-import assert from 'assert';
 import { Knifecycle, constant } from 'knifecycle';
-import initPGService from './index.js';
-import type { PGService } from './index.js';
-import type { LogService } from 'common-services';
+import initPGService, { type PGService } from './index.js';
+import { type LogService } from 'common-services';
 
 describe('initPGService', () => {
   const log = jest.fn<LogService>();
@@ -20,7 +18,7 @@ describe('initPGService', () => {
         log,
       });
 
-      assert(pg);
+      expect(pg).toBeDefined();
       expect(log.mock.calls).toMatchSnapshot();
     });
 
@@ -34,7 +32,7 @@ describe('initPGService', () => {
         log,
       });
 
-      assert(pg);
+      expect(pg).toBeDefined();
       log.mockClear();
 
       expect(log.mock.calls).toMatchSnapshot();
@@ -49,7 +47,7 @@ describe('initPGService', () => {
       .register(constant('ENV', { PG_URL: 'a_pg_url' }));
     const { pg } = await $.run<{ pg: PGService }>(['pg']);
 
-    assert(pg);
+    expect(pg).toBeDefined();
     expect(log.mock.calls).toMatchSnapshot();
   });
 });

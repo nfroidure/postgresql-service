@@ -5,6 +5,7 @@ import {
   type ProviderInitializer,
   type Dependencies,
   type Service,
+  type ProviderProperties,
 } from 'knifecycle';
 import { YError } from 'yerror';
 import pgConnectionString from 'pg-connection-string';
@@ -39,11 +40,12 @@ export const DEFAULT_PG_URL_ENV_NAME = 'PG_URL';
 type PG_CONFIG = PoolConfig;
 type SQLValue = any;
 
-export type PGServiceConfig<T extends string = typeof DEFAULT_PG_URL_ENV_NAME> =
-  {
-    PG_URL_ENV_NAME?: T;
-    PG: PG_CONFIG;
-  };
+export interface PGServiceConfig<
+  T extends string = typeof DEFAULT_PG_URL_ENV_NAME,
+> {
+  PG_URL_ENV_NAME?: T;
+  PG: PG_CONFIG;
+}
 
 export type PGEnvVars<T extends string = typeof DEFAULT_PG_URL_ENV_NAME> =
   Partial<Record<T, string>>;
@@ -55,10 +57,10 @@ export type PGServiceDependencies<
   log?: LogService;
 };
 
-export type PGQuery = {
+export interface PGQuery {
   text: string;
   values: SQLValue[];
-};
+}
 
 export interface PGService {
   query: (query: PGQuery) => Promise<QueryResult>;
@@ -97,7 +99,7 @@ export default location(
     ['?PG_URL_ENV_NAME', '?ENV', 'PG', '?log'],
   ),
   import.meta.url,
-) as unknown as typeof initPGService;
+) as unknown as ProviderProperties & typeof initPGService;
 
 /**
  * Instantiate the pg service
@@ -145,7 +147,7 @@ async function initPGService<
 
   if (!('password' in PG) && !pgURL) {
     log('error', `❌ - No "${pgURLName}" env var set.`);
-    throw new YError('E_BAD_PG_ENV', pgURLName);
+    throw new YError('E_BAD_PG_ENV', [pgURLName]);
   }
 
   const config = {
@@ -221,18 +223,16 @@ async function initPGService<
         }),
       );
     } catch (err) {
-      const castedError = YError.cast(
-        err as Error,
-        'E_PG_QUERIES',
+      const castedError = YError.cast(err as Error, 'E_PG_QUERIES', [
         queries.map((query) => query.text),
         queries.map((query) => query.values),
         (err as YError).code === 'E_PG_QUERY'
-          ? (err as YError).params &&
-            typeof (err as YError).params[2] === 'object'
-            ? (err as YError).params[2]
+          ? (err as YError).debugValues &&
+            typeof (err as YError).debugValues[2] === 'object'
+            ? (err as YError).debugValues[2]
             : {}
           : {},
-      );
+      ]);
 
       throw castedError;
     } finally {
@@ -271,18 +271,16 @@ async function initPGService<
           }
         }
       } catch (err) {
-        const castedError = YError.cast(
-          err as Error,
-          'E_PG_TRANSACTION',
+        const castedError = YError.cast(err as Error, 'E_PG_TRANSACTION', [
           queries.map((query) => query.text),
           queries.map((query) => query.values),
           (err as YError).code === 'E_PG_QUERY'
-            ? (err as YError).params &&
-              typeof (err as YError).params[2] === 'object'
-              ? (err as YError).params[2]
+            ? (err as YError).debugValues &&
+              typeof (err as YError).debugValues[2] === 'object'
+              ? (err as YError).debugValues[2]
               : {}
             : {},
-        );
+        ]);
 
         await client.query('ROLLBACK');
         throw castedError;
@@ -307,19 +305,23 @@ function castPGQueryError(
   args: unknown[],
   index: number,
 ) {
-  return YError.wrap(err, 'E_PG_QUERY', query, args, {
-    index,
-    code: err.code || undefined,
-    name: err.name || undefined,
-    severity: err.severity || undefined,
-    detail: err.detail || undefined,
-    schema: err.schema || undefined,
-    table: err.table || undefined,
-    column: err.column || undefined,
-    dataType: err.dataType || undefined,
-    constraint: err.constraint || undefined,
-    file: err.file || undefined,
-    line: err.line || undefined,
-    routine: err.routine || undefined,
-  });
+  return YError.wrap(err, 'E_PG_QUERY', [
+    query,
+    args,
+    {
+      index,
+      code: err.code || undefined,
+      name: err.name || undefined,
+      severity: err.severity || undefined,
+      detail: err.detail || undefined,
+      schema: err.schema || undefined,
+      table: err.table || undefined,
+      column: err.column || undefined,
+      dataType: err.dataType || undefined,
+      constraint: err.constraint || undefined,
+      file: err.file || undefined,
+      line: err.line || undefined,
+      routine: err.routine || undefined,
+    },
+  ]);
 }
