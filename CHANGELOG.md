@@ -1,3 +1,10 @@
+# [10.1.0](github.com/nfroidure/postgresql-service/compare/v10.0.0...v10.1.0) (2026-04-01)
+
+
+### Features
+
+* **core:** improve error management ([dacccb6](github.com/nfroidure/postgresql-service/commits/dacccb66f35fdfaa8bd70a020a0dc4acbf07d834))
+
 # [10.0.0](github.com/nfroidure/postgresql-service/compare/v9.0.1...v10.0.0) (2026-03-27)
 
 ## [9.0.1](https://github.com/nfroidure/postgresql-service/compare/v9.0.0...v9.0.1) (2025-11-06)
