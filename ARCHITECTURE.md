@@ -29,7 +29,7 @@ And that's it ;). The purpose is to know SQL, not an ORM, and
 
 PG module API Doc: https://node-postgres.com/features/pooling
 
-[See in context](./src/index.ts#L77-L93)
+[See in context](./src/index.ts#L107-L123)
 
 
 
@@ -38,7 +38,7 @@ PG module API Doc: https://node-postgres.com/features/pooling
 This service also convert `pg` errors into `yerror` ones which taste
  better imo.
 
-[See in context](./src/index.ts#L297-L301)
+[See in context](./src/index.ts#L333-L337)
 
 
 

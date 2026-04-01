@@ -7,7 +7,7 @@ import {
   type Service,
   type ProviderProperties,
 } from 'knifecycle';
-import { YError } from 'yerror';
+import { pickYErrorWithCode, YError } from 'yerror';
 import pgConnectionString from 'pg-connection-string';
 import pg from 'pg';
 import { type PoolConfig, type QueryResult, type DatabaseError } from 'pg';
@@ -61,6 +61,36 @@ export interface PGQuery {
   text: string;
   values: SQLValue[];
 }
+
+export type PGQueryDebugValues = [
+  query: string,
+  values: SQLValue[],
+  (
+    | (Pick<
+        DatabaseError,
+        | 'code'
+        | 'name'
+        | 'severity'
+        | 'detail'
+        | 'schema'
+        | 'table'
+        | 'column'
+        | 'dataType'
+        | 'constraint'
+        | 'file'
+        | 'line'
+        | 'routine'
+      > & {
+        index: number;
+      })
+    | undefined
+  ),
+];
+export type PGQueriesDebugValues = [
+  query: string[],
+  values: SQLValue[][],
+  PGQueryDebugValues[2],
+];
 
 export interface PGService {
   query: (query: PGQuery) => Promise<QueryResult>;
@@ -223,16 +253,19 @@ async function initPGService<
         }),
       );
     } catch (err) {
-      const castedError = YError.cast(err as Error, 'E_PG_QUERIES', [
-        queries.map((query) => query.text),
-        queries.map((query) => query.values),
-        (err as YError).code === 'E_PG_QUERY'
-          ? (err as YError).debugValues &&
-            typeof (err as YError).debugValues[2] === 'object'
-            ? (err as YError).debugValues[2]
-            : {}
-          : {},
-      ]);
+      const queryError = pickYErrorWithCode<PGQueryDebugValues>(
+        err as Error,
+        'E_PG_QUERY',
+      );
+      const castedError = YError.cast<PGQueriesDebugValues>(
+        err as Error,
+        'E_PG_QUERIES',
+        [
+          queries.map((query) => query.text),
+          queries.map((query) => query.values),
+          queryError?.debugValues[2],
+        ],
+      );
 
       throw castedError;
     } finally {
@@ -271,16 +304,19 @@ async function initPGService<
           }
         }
       } catch (err) {
-        const castedError = YError.cast(err as Error, 'E_PG_TRANSACTION', [
-          queries.map((query) => query.text),
-          queries.map((query) => query.values),
-          (err as YError).code === 'E_PG_QUERY'
-            ? (err as YError).debugValues &&
-              typeof (err as YError).debugValues[2] === 'object'
-              ? (err as YError).debugValues[2]
-              : {}
-            : {},
-        ]);
+        const queryError = pickYErrorWithCode<PGQueryDebugValues>(
+          err as Error,
+          'E_PG_QUERY',
+        );
+        const castedError = YError.cast<PGQueriesDebugValues>(
+          err as Error,
+          'E_PG_TRANSACTION',
+          [
+            queries.map((query) => query.text),
+            queries.map((query) => query.values),
+            queryError?.debugValues[2],
+          ],
+        );
 
         await client.query('ROLLBACK');
         throw castedError;
@@ -305,7 +341,7 @@ function castPGQueryError(
   args: unknown[],
   index: number,
 ) {
-  return YError.wrap(err, 'E_PG_QUERY', [
+  return YError.wrap<PGQueryDebugValues>(err, 'E_PG_QUERY', [
     query,
     args,
     {
