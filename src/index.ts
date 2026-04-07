@@ -92,6 +92,15 @@ export type PGQueriesDebugValues = [
   PGQueryDebugValues[2],
 ];
 
+declare module 'yerror' {
+  interface YErrorRegistry {
+    E_PG_QUERY: PGQueryDebugValues;
+    E_PG_QUERIES: PGQueriesDebugValues;
+    E_PG_TRANSACTION: PGQueriesDebugValues;
+    E_BAD_PG_ENV: [pgURLName: string];
+  }
+}
+
 export interface PGService {
   query: (query: PGQuery) => Promise<QueryResult>;
   queries: (queries: PGQuery[]) => Promise<QueryResult[]>;
@@ -253,17 +262,17 @@ async function initPGService<
         }),
       );
     } catch (err) {
-      const queryError = pickYErrorWithCode<PGQueryDebugValues>(
+      const queryError = pickYErrorWithCode(
         err as Error,
         'E_PG_QUERY',
       );
-      const castedError = YError.cast<PGQueriesDebugValues>(
+      const castedError = YError.cast(
         err as Error,
         'E_PG_QUERIES',
         [
           queries.map((query) => query.text),
           queries.map((query) => query.values),
-          queryError?.debugValues[2],
+          queryError?.debug[2],
         ],
       );
 
@@ -304,17 +313,17 @@ async function initPGService<
           }
         }
       } catch (err) {
-        const queryError = pickYErrorWithCode<PGQueryDebugValues>(
+        const queryError = pickYErrorWithCode(
           err as Error,
           'E_PG_QUERY',
         );
-        const castedError = YError.cast<PGQueriesDebugValues>(
+        const castedError = YError.cast(
           err as Error,
           'E_PG_TRANSACTION',
           [
             queries.map((query) => query.text),
             queries.map((query) => query.values),
-            queryError?.debugValues[2],
+            queryError?.debug[2],
           ],
         );
 
@@ -341,7 +350,7 @@ function castPGQueryError(
   args: unknown[],
   index: number,
 ) {
-  return YError.wrap<PGQueryDebugValues>(err, 'E_PG_QUERY', [
+  return YError.wrap(err, 'E_PG_QUERY', [
     query,
     args,
     {
